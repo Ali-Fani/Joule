@@ -64,6 +64,10 @@ internal static class SelfTest
         Check("gearhub mouse 45%, teclado desligado", gh.Mouse?.Percent == 45 && gh.Keyboard is null);
         var gh2 = ChineseBrandsProvider.ParseGearHub(B(0x01, 0x50, 0x2D, 0x00, 0x00, 0x01));
         Check("gearhub teclado ligado tambem vira linha", gh2.Keyboard?.Percent == 80);
+        var gh3 = ChineseBrandsProvider.ParseGearHub(B(0x00, 0x00, 0x37, 0x01, 0x00, 0x01));
+        Check("gearhub bateria vale mesmo sem canRead", gh3.Mouse?.Percent == 55);
+        Check("gearhub zeros nao viram bateria 0%", !ChineseBrandsProvider.IsGearHubStatus(new byte[64])
+            && ChineseBrandsProvider.ParseGearHub(new byte[64]).Mouse is null);
         Check("incott 09 5F = 95%", IncottProvider.Parse(B(0x09, 0x5F, 0x10, 0x04, 0x00, 0x0F, 0x0F, 0x10)) == (95, false));
         Check("incott 09 E1 = carregando 97%", IncottProvider.Parse(B(0x09, 0xE1, 0x10, 0x04, 0x00, 0x0F, 0x0F, 0x10)) == (97, true));
         Check("incott outro relatorio", IncottProvider.Parse(B(0x01, 0x5F, 0x10)) is null);

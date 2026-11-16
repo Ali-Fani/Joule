@@ -211,7 +211,17 @@ public sealed class HidRequest : IDisposable
         if (handle == INVALID_HANDLE_VALUE) return null;
         try
         {
-            if (!HidD_SetFeature(handle, (byte[])request.Clone(), request.Length)) return null;
+            // Most HID drivers accept feature reports on a metadata-only handle,
+            // but some GearHub receivers require explicit read/write access.
+            // Retry only the same caller-supplied battery request.
+            if (!HidD_SetFeature(handle, (byte[])request.Clone(), request.Length))
+            {
+                CloseHandle(handle);
+                handle = CreateFile(target.Path, GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+                if (handle == INVALID_HANDLE_VALUE || !HidD_SetFeature(handle, (byte[])request.Clone(), request.Length))
+                    return null;
+            }
             for (int i = 0; i < reads; i++)
             {
                 Thread.Sleep(wait);

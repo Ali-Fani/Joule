@@ -365,12 +365,17 @@ public sealed class ChineseBrandsProvider : IStandaloneProvider
     private static List<(string, bool, BatteryReading, DeviceKind)> ReadGearHub(List<HidCollection> cols, string product)
     {
         string mouseName = string.IsNullOrWhiteSpace(product) ? "Mouse GearHub" : product;
-        var col = FeatureChannel(cols, 65);
+        // GearHub-V5 exposes its unnumbered 64-byte feature report on the
+        // vendor control collection FFFF:0002. Other collections with the same
+        // length are not interchangeable on the shared 3151 receiver.
+        var col = cols.FirstOrDefault(c => c.UsagePage == 0xFFFF && c.Usage == 0x0002 && c.FeatureLen == 65);
         if (col is null) return new() { (mouseName, false, NoChannel, DeviceKind.Mouse) };
         var wire = new byte[65];
         wire[1] = 0xF7;
-        // [0] = 1 quando o receptor tem a resposta pronta: le de novo sem repetir.
-        var reply = HidRequest.Feature(col, wire, TimeSpan.FromMilliseconds(30), r => r[1] != 0x01, reads: 4);
+        // F7 returns receiver status directly. canRead ([0]) is a relay flag for
+        // subsequent mouse commands, not a requirement for the battery fields.
+        var reply = HidRequest.Feature(col, wire, TimeSpan.FromMilliseconds(30),
+            r => !IsGearHubStatus(r[1..]), reads: 4);
         if (reply is null) return new() { (mouseName, false, BatteryReading.NoData(L.T("o receptor não respondeu", "the receiver didn’t answer")), DeviceKind.Mouse) };
         var (mouse, keyboard) = ParseGearHub(reply[1..]);
         var list = new List<(string, bool, BatteryReading, DeviceKind)>();
@@ -383,10 +388,18 @@ public sealed class ChineseBrandsProvider : IStandaloneProvider
     /// <summary>Resposta sem o id: [1] % teclado, [2] % mouse, [3]/[4] = 0 quando ligado.</summary>
     internal static (BatteryReading? Mouse, BatteryReading? Keyboard) ParseGearHub(byte[] d)
     {
-        BatteryReading? mouse = d[4] == 0 && d[2] <= 100 ? BatteryReading.Percentage(d[2]) : null;
-        BatteryReading? keyboard = d[3] == 0 && d[1] <= 100 ? BatteryReading.Percentage(d[1]) : null;
+        if (!IsGearHubStatus(d)) return (null, null);
+        BatteryReading? mouse = d[4] == 0 && d[2] is > 0 and <= 100 ? BatteryReading.Percentage(d[2]) : null;
+        BatteryReading? keyboard = d[3] == 0 && d[1] is > 0 and <= 100 ? BatteryReading.Percentage(d[1]) : null;
         return (mouse, keyboard);
     }
+
+    /// <summary>Valida o quadro F7 sem confundir 64 zeros com um estado real.</summary>
+    internal static bool IsGearHubStatus(byte[] d) =>
+        d.Length >= 6 &&
+        d[0] <= 1 && d[1] <= 100 && d[2] <= 100 &&
+        d[3] <= 1 && d[4] <= 1 && d[5] <= 1 &&
+        d.Take(6).Any(b => b != 0);
 
     // ---------------- Bytech ----------------
 
