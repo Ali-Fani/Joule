@@ -51,6 +51,7 @@ public sealed class ProviderRegistry
             new SteelSeriesProvider(),
             new HyperXProvider(),
             new CorsairProvider(),
+            new AulaF75Provider(),
             new CompxProvider(),
             new ChineseBrandsProvider(),
         });

@@ -103,6 +103,26 @@ internal static class SelfTest
         Check("atk valor fora da faixa vira sem dado, nao 100%", CompxProvider.ParseBattery(atkHigh) is { Status: ReadingStatus.NoData, Percent: null });
         Check("compx handles", new CompxProvider().Handles(0x373B, 0x1085) && new CompxProvider().Handles(0x3554, 0xFB56) && new CompxProvider().Handles(0x3710, 0x1234) && !new CompxProvider().Handles(0x3710, 0x5405) && new CompxProvider().Handles(0x260D, 0x1114));
 
+        // --- AULA F75: the only emitted command is the documented battery getter. ---
+        var aula = AulaF75Provider.BuildRequest();
+        Check("aula request 13 4A with checksum", aula.Length == 20 && aula[0] == 0x13 && aula[1] == 0x4A && aula[19] == 0x5D);
+        var aulaBattery = B(0x13, 0x4A, 0x01, 0x00, 0x02, 0x61, 0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xC2);
+        Check("aula valid battery reply", AulaF75Provider.IsBatteryReply(aulaBattery));
+        Eq("aula battery 97%", 97, AulaF75Provider.Decode(aulaBattery).Percent);
+        var aulaWiredReply = B(0x13, 0x4A, 0x01, 0x00, 0x02, 0x64, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xD4);
+        Check("aula cable does not lie about 100%", AulaF75Provider.Decode(aulaWiredReply) is { Status: ReadingStatus.Charging, Percent: null });
+        var aulaBad = (byte[])aulaBattery.Clone(); aulaBad[5] = 96;
+        Check("aula bad checksum rejected", !AulaF75Provider.IsBatteryReply(aulaBad));
+        var aulaHigh = (byte[])aulaBattery.Clone(); aulaHigh[5] = 101; aulaHigh[^1] = AulaF75Provider.Checksum(aulaHigh);
+        Check("aula out-of-range level rejected", AulaF75Provider.Decode(aulaHigh) is { Status: ReadingStatus.NoData, Percent: null });
+        var aulaProvider = new AulaF75Provider();
+        Check("aula owns both IDs", aulaProvider.Handles(0x3554, 0xFA09) && aulaProvider.Handles(0x258A, 0x010C));
+        var aulaWired = aulaProvider.Discover(new[]
+        {
+            new HidCollection { Path = "aula-wired", Vid = 0x258A, Pid = 0x010C, Product = "Gaming Keyboard" },
+        }).Single();
+        Check("aula wired shows cable state without inventing a percent", aulaWired.Reading is { Status: ReadingStatus.Charging, Percent: null } && aulaWired.Origin == "Cabo");
+
         // Confirmacao: o pico de um relatorio so (80, 90, 80 -- visto no log de 2026-10-22) nao troca o valor.
         var conf = new PassiveReportListener("t", _ => false, r => r[0], confirmReports: 2);
         conf.OnReport(B(80));

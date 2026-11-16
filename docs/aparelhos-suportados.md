@@ -23,6 +23,7 @@ quer dizer que ele manda a pergunta de bateria uma vez por leitura (veja o
 | Controles Xbox | adaptador, cabo | XInput | Faixa (baixa / média / cheia) pelo adaptador; "no cabo" quando plugado |
 | 8BitDo Ultimate 2C | cabo | XInput | Só "no cabo", sem percentual. Pelo dongle ele informa um valor falso, que o Joule descarta |
 | Qualquer aparelho Bluetooth | Bluetooth | lê o Windows | O mesmo número de *Configurações > Bluetooth*. Nada vai pelo rádio |
+| AULA F75 | cabo `258A:010C` | presença | Mostra "no cabo", sem inventar um percentual |
 
 ## Não testados
 
@@ -36,6 +37,7 @@ quer dizer que ele manda a pergunta de bateria uma vez por leitura (veja o
 | Attack Shark | X6, X11, X11 SE, Delux M600 Pro no mesmo receptor do R1 | escuta |
 | Attack Shark | R2 (receptor GearHub-V5), R5 Ultra, R6, R8 | pergunta |
 | ATK, VXE, VGN, Pulsar, Dareu, Hitscan | protocolo do "relatório 8" dos chips Compx/Beken (192 modelos ATK) | pergunta |
+| AULA | F75 (receptor `3554:FA09`) | pergunta só a bateria pelo receptor |
 | G-Wolves | gerações xvi e HTX Ultra | pergunta |
 | Lamzu, LunaFury, CRDRAKO, Vancer, RAWM, WLmouse | mesma família de protocolo | pergunta |
 | AJAZZ | NJ07, NJ08 | pergunta |

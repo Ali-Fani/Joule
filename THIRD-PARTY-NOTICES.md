@@ -77,6 +77,7 @@ code is Joule's own.
 | [hyperx_pulsefire_dart_reverse_engineering](https://github.com/santeri3700/hyperx_pulsefire_dart_reverse_engineering) | HyperX Pulsefire Dart | CC0-1.0 |
 | [RazerNariBatteryLevel](https://github.com/Modzeleczek/RazerNariBatteryLevel) | Razer Nari (format of the reply only) | no license stated |
 | [OpenMouse](https://github.com/OpenMouse-Project/mouse-protocol) | Attack Shark, Compx and the other brands | AGPL-3.0-or-later |
+| [sanshoku](https://github.com/ushineko/sanshoku) | AULA F75 battery report | MIT |
 
 Thank you to everyone who documented these protocols in the open.
 

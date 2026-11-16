@@ -22,6 +22,7 @@ battery question once per reading (see [SECURITY.md](../SECURITY.md)).
 | Xbox controllers | adapter, cable | XInput | Coarse level (low / medium / full) on the adapter; "on cable" when wired |
 | 8BitDo Ultimate 2C | cable | XInput | Only "on cable", no percentage. On the dongle it reports a false value, which Joule discards |
 | Any Bluetooth device | Bluetooth | reads Windows | The same number as *Settings > Bluetooth*. Nothing goes over the radio |
+| AULA F75 | `258A:010C` cable | presence | Shows "wired", without inventing a percentage |
 
 ## Not tested
 
@@ -35,6 +36,7 @@ battery question once per reading (see [SECURITY.md](../SECURITY.md)).
 | Attack Shark | X6, X11, X11 SE, Delux M600 Pro on the same receiver as the R1 | listens |
 | Attack Shark | R2 (GearHub-V5 receiver), R5 Ultra, R6, R8 | asks |
 | ATK, VXE, VGN, Pulsar, Dareu, Hitscan | "report 8" protocol of Compx/Beken chips (192 ATK models) | asks |
+| AULA | F75 (`3554:FA09` receiver) | asks only for battery on the receiver |
 | G-Wolves | xvi generations and HTX Ultra | asks |
 | Lamzu, LunaFury, CRDRAKO, Vancer, RAWM, WLmouse | same protocol family | asks |
 | AJAZZ | NJ07, NJ08 | asks |
