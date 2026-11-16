@@ -102,6 +102,11 @@ internal static class SelfTest
         var atkHigh = (byte[])atkReply.Clone(); atkHigh[5] = 0xC8; atkHigh[15] = CompxProvider.Checksum(atkHigh);
         Check("atk valor fora da faixa vira sem dado, nao 100%", CompxProvider.ParseBattery(atkHigh) is { Status: ReadingStatus.NoData, Percent: null });
         Check("compx handles", new CompxProvider().Handles(0x373B, 0x1085) && new CompxProvider().Handles(0x3554, 0xFB56) && new CompxProvider().Handles(0x3710, 0x1234) && !new CompxProvider().Handles(0x3710, 0x5405) && new CompxProvider().Handles(0x260D, 0x1114));
+        var zaopin = new CompxProvider().Discover(new[]
+        {
+            new HidCollection { Path = "zaopin", Vid = 0x3554, Pid = 0xF527, Product = "Z8D" },
+        }).Single();
+        Check("compx names confirmed zaopin receiver", zaopin.DisplayName == "Zaopin ZPW MAX (8K)");
 
         // Confirmacao: o pico de um relatorio so (80, 90, 80 -- visto no log de 2026-10-22) nao troca o valor.
         var conf = new PassiveReportListener("t", _ => false, r => r[0], confirmReports: 2);

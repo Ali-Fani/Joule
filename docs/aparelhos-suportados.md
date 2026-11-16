@@ -23,6 +23,7 @@ quer dizer que ele manda a pergunta de bateria uma vez por leitura (veja o
 | Controles Xbox | adaptador, cabo | XInput | Faixa (baixa / média / cheia) pelo adaptador; "no cabo" quando plugado |
 | 8BitDo Ultimate 2C | cabo | XInput | Só "no cabo", sem percentual. Pelo dongle ele informa um valor falso, que o Joule descarta |
 | Qualquer aparelho Bluetooth | Bluetooth | lê o Windows | O mesmo número de *Configurações > Bluetooth*. Nada vai pelo rádio |
+| Zaopin ZPW MAX (8K) | receptor `3554:F527` | pergunta | Percentual confirmado no aparelho real |
 
 ## Não testados
 

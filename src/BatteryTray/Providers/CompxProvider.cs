@@ -35,6 +35,7 @@ public sealed class CompxProvider : IStandaloneProvider
         [(0x3554, 0xF50A)] = "ATK Dragonfly",
         [(0x3554, 0xF58C)] = "VXE R1 PRO",
         [(0x3554, 0xF58F)] = "VXE (mouse)",
+        [(0x3554, 0xF527)] = "Zaopin ZPW MAX (8K)",
         [(0x373B, 0x1014)] = "ATK F1 PRO",
         [(0x373B, 0x1015)] = "ATK F1 PRO MAX",
         [(0x373B, 0x1016)] = "ATK X1 PRO",
