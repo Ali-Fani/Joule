@@ -55,6 +55,7 @@ Get `JouleApp-win-Setup.exe` with the button above or from the
 |---|---|---|
 | Attack Shark R1 | dongle | ✅ checked |
 | Rapoo MT760 Mini | dongle | ✅ checked |
+| Razer BlackShark V3 | dongle | ✅ checked |
 | DualSense | cable | ✅ checked |
 | Xbox controllers | adapter and cable | ✅ checked |
 | 8BitDo Ultimate 2C | cable | ✅ checked |

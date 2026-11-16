@@ -127,6 +127,23 @@ internal static class SelfTest
         Null("rapoo byte3 errado", RapooProvider.ParsePercent(B(0xBB, 0xB0, 0x01, 0x41, 0x06, 0x01, 0x32)));
         Null("rapoo curto demais", RapooProvider.ParsePercent(B(0xBB, 0xB0, 0x01, 0x40, 0x06, 0x01)));
 
+        // --- BlackShark V3: 02 02 60 .. 80 21 01 01 <bat>, captura real com 35% ---
+        static byte[] Bs(byte cls = 0x21, byte sub = 0x01, byte arg = 0x01, byte bat = 0x23, int len = 64)
+        {
+            var r = new byte[len];
+            r[0] = 0x02; r[1] = 0x02; r[2] = 0x60; r[6] = 0x05; r[9] = 0x80;
+            if (len > 13) { r[10] = cls; r[11] = sub; r[12] = arg; r[13] = bat; }
+            return r;
+        }
+        Eq("blackshark 35%", 35, BlackSharkProvider.ParsePercent(Bs()));
+        Eq("blackshark 100%", 100, BlackSharkProvider.ParsePercent(Bs(bat: 100)));
+        Null("blackshark >100 rejeitado", BlackSharkProvider.ParsePercent(Bs(bat: 101)));
+        Null("blackshark outra classe (0x5C)", BlackSharkProvider.ParsePercent(Bs(cls: 0x5C)));
+        Null("blackshark push (sub 02)", BlackSharkProvider.ParsePercent(Bs(sub: 0x02)));
+        Null("blackshark curto demais", BlackSharkProvider.ParsePercent(Bs(len: 13)));
+        var bsAsk = BlackSharkProvider.BuildRequest();
+        Check("blackshark pergunta: 64 bytes, classe 21, XOR C7 (conferido no aparelho)", bsAsk.Length == 64 && bsAsk[10] == 0x21 && bsAsk[62] == 0xC7);
+
         // --- DualSense: relatorio 0x01 de 64 bytes (so o cabo), byte 53 = nivel + estado ---
         // O caso do controle real medido aqui: 0x29 = estado 2 (cheio), nivel 9.
         Eq("dualsense cheio no cabo", 100, DualSenseProvider.ParseStatus(Ds(0x29))?.Percent);
@@ -251,6 +268,7 @@ internal static class SelfTest
         Check("1D57:FA60 -> AttackShark", registry.Resolve(0x1D57, 0xFA60)?.Name == "AttackShark");
         Check("1D57:FA61 -> AttackShark", registry.Resolve(0x1D57, 0xFA61)?.Name == "AttackShark");
         Check("24AE:1871 -> Rapoo", registry.Resolve(0x24AE, 0x1871)?.Name == "Rapoo");
+        Check("1532:057A -> BlackShark", registry.Resolve(0x1532, 0x057A)?.Name == "BlackShark");
         Check("054C:0CE6 -> DualSense", registry.Resolve(0x054C, 0x0CE6)?.Name == "DualSense");
         Check("desconhecido nao resolve", registry.Resolve(0x0951, 0x16B7) is null);
         Check("headset sem provider", registry.Resolve(0x291D, 0x385D) is null);

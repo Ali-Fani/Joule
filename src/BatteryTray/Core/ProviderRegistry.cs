@@ -39,6 +39,7 @@ public sealed class ProviderRegistry
         {
             new AttackSharkProvider(),
             new RapooProvider(),
+            new BlackSharkProvider(),
             new IncottProvider(),
             new DualSenseProvider(),
         },
