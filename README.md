@@ -31,7 +31,7 @@ battery your wireless devices have left. It is free, open source and in
 - **Connect notice**: when a device turns on, Joule shows its battery, on the
   widget or as a Windows notification, with sound if you want.
 - **Low battery alert**, with a limit you choose.
-- **English and Portuguese**: follows the Windows language, and you can switch
+- **English, Portuguese and French**: follows the Windows language, and you can switch
   in Settings.
 - **Summary after updating**: how many devices Joule tracked and how many
   low-battery warnings it gave, counted only on your PC, plus what changed in

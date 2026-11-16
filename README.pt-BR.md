@@ -32,7 +32,7 @@ está em **beta**.
 - **Aviso ao conectar**: quando um aparelho liga, o Joule mostra a bateria dele,
   no widget ou no aviso do Windows, com som se você quiser.
 - **Alerta de bateria baixa**, com o limite que você escolher.
-- **Português e inglês**: segue o idioma do Windows, e dá para trocar nas
+- **Português, inglês e francês**: segue o idioma do Windows, e dá para trocar nas
   Configurações.
 - **Resumo depois de atualizar**: quantos aparelhos o Joule acompanhou e quantos
   avisos de bateria baixa deu, contados só no seu PC, e o que mudou na versão.

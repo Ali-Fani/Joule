@@ -686,10 +686,11 @@
                                 <StackPanel Margin="14,12">
                                     <TextBlock Text="{ui:Tr 'Idioma', 'Language'}" />
                                     <Border Style="{StaticResource SegmentTrack}" Margin="0,10,0,0">
-                                        <UniformGrid Columns="3">
+                                        <UniformGrid Columns="2">
                                             <RadioButton x:Name="LanguageAuto" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="{ui:Tr 'Do Windows', 'Windows'}" />
                                             <RadioButton x:Name="LanguagePt" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="Português" />
                                             <RadioButton x:Name="LanguageEn" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="English" />
+                                            <RadioButton x:Name="LanguageFr" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="Français" />
                                         </UniformGrid>
                                     </Border>
                                     <DockPanel x:Name="LanguageRestart" Margin="0,10,0,0" Visibility="Collapsed">

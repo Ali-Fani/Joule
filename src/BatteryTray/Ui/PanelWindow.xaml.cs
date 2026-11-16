@@ -304,9 +304,6 @@ public partial class PanelWindow : Window
         UpdateButton.IsEnabled = enabled;
     }
 
-    private static bool WouldBeEnglish(string choice) =>
-        choice switch { "en" => true, "pt" => false, _ => System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != "pt" };
-
     private void OnCreditClick(object sender, RoutedEventArgs e) => TrayController.OpenExternal((string)((FrameworkElement)sender).Tag);
 
     private void LoadSettings()
@@ -323,10 +320,11 @@ public partial class PanelWindow : Window
             ThresholdSlider.Value = _settings.LowBatteryThreshold;
             ThresholdValue.Text = $"{_settings.LowBatteryThreshold}%";
             AutostartSwitch.IsChecked = Autostart.IsEnabled();
-            LanguageAuto.IsChecked = _settings.Language is not ("pt" or "en");
+            LanguageAuto.IsChecked = _settings.Language is not ("pt" or "en" or "fr");
             LanguagePt.IsChecked = _settings.Language == "pt";
             LanguageEn.IsChecked = _settings.Language == "en";
-            LanguageRestart.Visibility = WouldBeEnglish(_settings.Language) != L.En ? Visibility.Visible : Visibility.Collapsed;
+            LanguageFr.IsChecked = _settings.Language == "fr";
+            LanguageRestart.Visibility = L.Resolve(_settings.Language) != L.Current ? Visibility.Visible : Visibility.Collapsed;
 
             var requested = Theme.Parse(_settings.Appearance);
             AppearanceGlass.IsChecked = requested == Appearance.Glass;
@@ -421,6 +419,7 @@ public partial class PanelWindow : Window
         LanguageAuto.Checked += (_, _) => Changed(() => _settings.Language = "auto");
         LanguagePt.Checked += (_, _) => Changed(() => _settings.Language = "pt");
         LanguageEn.Checked += (_, _) => Changed(() => _settings.Language = "en");
+        LanguageFr.Checked += (_, _) => Changed(() => _settings.Language = "fr");
         RestartButton.Click += (_, _) => RestartRequested?.Invoke();
 
         void SetAppearance(Appearance a) => Changed(() =>
