@@ -585,6 +585,11 @@ internal static class SelfTest
         bool english = PanelView.Age(TimeSpan.FromMinutes(5)) == "5 min ago" && PanelView.Age(TimeSpan.FromSeconds(1)) == "now";
         L.Set("pt");
         Check("idioma: modo ingles troca os textos e o portugues volta", english && PanelView.Age(TimeSpan.FromMinutes(5)) == "há 5 min");
+        L.Set("ru");
+        Check("idioma: russo traduz textos e intervalos", L.T("Configurações", "Settings") == "Настройки" && PanelView.Age(TimeSpan.FromMinutes(5)) == "5 мин назад");
+        var russianNoData = new DeviceEntry { Key = "ru", DisplayName = "AJAZZ", Reading = BatteryReading.NoData(L.T("o receptor não respondeu", "the receiver didn’t answer")), IsConnected = true };
+        Check("idioma: motivo sem dado inteiramente по-русски", PanelView.Reason(russianNoData) == "Сейчас нет данных: ресивер не ответил.");
+        L.Set("pt");
 
         // --- tela depois de atualizar (2026-11-12) ---
         Check("apoio: nao abre na primeira instalacao", Changes.UpdatedFrom("", "0.2.0", onboardingDone: false) is null);

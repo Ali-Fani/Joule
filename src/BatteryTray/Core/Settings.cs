@@ -72,7 +72,7 @@ public sealed class Settings
     [JsonPropertyName("glassBlur")]
     public bool GlassBlur { get; set; } = true;
 
-    /// <summary>Idioma da interface: "auto" (o do Windows), "pt" ou "en". Vale ao abrir o app (Core.L).</summary>
+    /// <summary>Idioma da interface: "auto" (o do Windows), "pt", "en" ou "ru". Vale ao abrir o app.</summary>
     [JsonPropertyName("language")]
     public string Language { get; set; } = "auto";
 

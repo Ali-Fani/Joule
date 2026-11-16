@@ -117,7 +117,14 @@ public static class Known
         CableOnly.Contains(Id(vid, pid)) ? "Cabo" : "Dongle";
 
     /// <summary>Origem como aparece na tela: o dado fica em portugues (cache, comparacoes), so o rotulo traduz.</summary>
-    public static string OriginLabel(string origin) => origin switch { "Cabo" => L.T("Cabo", "Wired"), "Adaptador" => L.T("Adaptador", "Adapter"), _ => origin };
+    public static string OriginLabel(string origin) => origin switch
+    {
+        "Cabo" => L.T("Cabo", "Wired"),
+        "Adaptador" => L.T("Adaptador", "Adapter"),
+        "Dongle" => L.T("Dongle", "Dongle"),
+        "Bluetooth" => "Bluetooth",
+        _ => origin,
+    };
 
     public static string Id(ushort vid, ushort pid) => $"{vid:X4}:{pid:X4}";
 
