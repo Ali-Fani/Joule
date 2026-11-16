@@ -234,7 +234,7 @@ public sealed class HidRequest : IDisposable
         }
         finally
         {
-            CloseHandle(handle);
+            if (handle != INVALID_HANDLE_VALUE) CloseHandle(handle);
         }
     }
 
