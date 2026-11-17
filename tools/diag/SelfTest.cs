@@ -64,6 +64,10 @@ internal static class SelfTest
         Check("gearhub mouse 45%, teclado desligado", gh.Mouse?.Percent == 45 && gh.Keyboard is null);
         var gh2 = ChineseBrandsProvider.ParseGearHub(B(0x01, 0x50, 0x2D, 0x00, 0x00, 0x01));
         Check("gearhub teclado ligado tambem vira linha", gh2.Keyboard?.Percent == 80);
+        var gh3 = ChineseBrandsProvider.ParseGearHub(B(0x00, 0x00, 0x37, 0x01, 0x00, 0x01));
+        Check("gearhub bateria vale mesmo sem canRead", gh3.Mouse?.Percent == 55);
+        Check("gearhub zeros nao viram bateria 0%", !ChineseBrandsProvider.IsGearHubStatus(new byte[64])
+            && ChineseBrandsProvider.ParseGearHub(new byte[64]).Mouse is null);
         Check("incott 09 5F = 95%", IncottProvider.Parse(B(0x09, 0x5F, 0x10, 0x04, 0x00, 0x0F, 0x0F, 0x10)) == (95, false));
         Check("incott 09 E1 = carregando 97%", IncottProvider.Parse(B(0x09, 0xE1, 0x10, 0x04, 0x00, 0x0F, 0x0F, 0x10)) == (97, true));
         Check("incott outro relatorio", IncottProvider.Parse(B(0x01, 0x5F, 0x10)) is null);
@@ -102,6 +106,31 @@ internal static class SelfTest
         var atkHigh = (byte[])atkReply.Clone(); atkHigh[5] = 0xC8; atkHigh[15] = CompxProvider.Checksum(atkHigh);
         Check("atk valor fora da faixa vira sem dado, nao 100%", CompxProvider.ParseBattery(atkHigh) is { Status: ReadingStatus.NoData, Percent: null });
         Check("compx handles", new CompxProvider().Handles(0x373B, 0x1085) && new CompxProvider().Handles(0x3554, 0xFB56) && new CompxProvider().Handles(0x3710, 0x1234) && !new CompxProvider().Handles(0x3710, 0x5405) && new CompxProvider().Handles(0x260D, 0x1114));
+        var zaopin = new CompxProvider().Discover(new[]
+        {
+            new HidCollection { Path = "zaopin", Vid = 0x3554, Pid = 0xF527, Product = "Z8D" },
+        }).Single();
+        Check("compx names confirmed zaopin receiver", zaopin.DisplayName == "Zaopin ZPW MAX (8K)");
+
+        // --- AULA F75: the only emitted command is the documented battery getter. ---
+        var aula = AulaF75Provider.BuildRequest();
+        Check("aula request 13 4A with checksum", aula.Length == 20 && aula[0] == 0x13 && aula[1] == 0x4A && aula[19] == 0x5D);
+        var aulaBattery = B(0x13, 0x4A, 0x01, 0x00, 0x02, 0x61, 0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xC2);
+        Check("aula valid battery reply", AulaF75Provider.IsBatteryReply(aulaBattery));
+        Eq("aula battery 97%", 97, AulaF75Provider.Decode(aulaBattery).Percent);
+        var aulaWiredReply = B(0x13, 0x4A, 0x01, 0x00, 0x02, 0x64, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xD4);
+        Check("aula cable does not lie about 100%", AulaF75Provider.Decode(aulaWiredReply) is { Status: ReadingStatus.Charging, Percent: null });
+        var aulaBad = (byte[])aulaBattery.Clone(); aulaBad[5] = 96;
+        Check("aula bad checksum rejected", !AulaF75Provider.IsBatteryReply(aulaBad));
+        var aulaHigh = (byte[])aulaBattery.Clone(); aulaHigh[5] = 101; aulaHigh[^1] = AulaF75Provider.Checksum(aulaHigh);
+        Check("aula out-of-range level rejected", AulaF75Provider.Decode(aulaHigh) is { Status: ReadingStatus.NoData, Percent: null });
+        var aulaProvider = new AulaF75Provider();
+        Check("aula owns both IDs", aulaProvider.Handles(0x3554, 0xFA09) && aulaProvider.Handles(0x258A, 0x010C));
+        var aulaWired = aulaProvider.Discover(new[]
+        {
+            new HidCollection { Path = "aula-wired", Vid = 0x258A, Pid = 0x010C, Product = "Gaming Keyboard" },
+        }).Single();
+        Check("aula wired shows cable state without inventing a percent", aulaWired.Reading is { Status: ReadingStatus.Charging, Percent: null } && aulaWired.Origin == "Cabo");
 
         // Confirmacao: o pico de um relatorio so (80, 90, 80 -- visto no log de 2026-10-22) nao troca o valor.
         var conf = new PassiveReportListener("t", _ => false, r => r[0], confirmReports: 2);
@@ -126,6 +155,23 @@ internal static class SelfTest
         Null("rapoo byte1 errado", RapooProvider.ParsePercent(B(0xBB, 0xB1, 0x01, 0x40, 0x06, 0x01, 0x32)));
         Null("rapoo byte3 errado", RapooProvider.ParsePercent(B(0xBB, 0xB0, 0x01, 0x41, 0x06, 0x01, 0x32)));
         Null("rapoo curto demais", RapooProvider.ParsePercent(B(0xBB, 0xB0, 0x01, 0x40, 0x06, 0x01)));
+
+        // --- BlackShark V3: 02 02 60 .. 80 21 01 01 <bat>, captura real com 35% ---
+        static byte[] Bs(byte cls = 0x21, byte sub = 0x01, byte arg = 0x01, byte bat = 0x23, int len = 64)
+        {
+            var r = new byte[len];
+            r[0] = 0x02; r[1] = 0x02; r[2] = 0x60; r[6] = 0x05; r[9] = 0x80;
+            if (len > 13) { r[10] = cls; r[11] = sub; r[12] = arg; r[13] = bat; }
+            return r;
+        }
+        Eq("blackshark 35%", 35, BlackSharkProvider.ParsePercent(Bs()));
+        Eq("blackshark 100%", 100, BlackSharkProvider.ParsePercent(Bs(bat: 100)));
+        Null("blackshark >100 rejeitado", BlackSharkProvider.ParsePercent(Bs(bat: 101)));
+        Null("blackshark outra classe (0x5C)", BlackSharkProvider.ParsePercent(Bs(cls: 0x5C)));
+        Null("blackshark push (sub 02)", BlackSharkProvider.ParsePercent(Bs(sub: 0x02)));
+        Null("blackshark curto demais", BlackSharkProvider.ParsePercent(Bs(len: 13)));
+        var bsAsk = BlackSharkProvider.BuildRequest();
+        Check("blackshark pergunta: 64 bytes, classe 21, XOR C7 (conferido no aparelho)", bsAsk.Length == 64 && bsAsk[10] == 0x21 && bsAsk[62] == 0xC7);
 
         // --- DualSense: relatorio 0x01 de 64 bytes (so o cabo), byte 53 = nivel + estado ---
         // O caso do controle real medido aqui: 0x29 = estado 2 (cheio), nivel 9.
@@ -251,6 +297,7 @@ internal static class SelfTest
         Check("1D57:FA60 -> AttackShark", registry.Resolve(0x1D57, 0xFA60)?.Name == "AttackShark");
         Check("1D57:FA61 -> AttackShark", registry.Resolve(0x1D57, 0xFA61)?.Name == "AttackShark");
         Check("24AE:1871 -> Rapoo", registry.Resolve(0x24AE, 0x1871)?.Name == "Rapoo");
+        Check("1532:057A -> BlackShark", registry.Resolve(0x1532, 0x057A)?.Name == "BlackShark");
         Check("054C:0CE6 -> DualSense", registry.Resolve(0x054C, 0x0CE6)?.Name == "DualSense");
         Check("desconhecido nao resolve", registry.Resolve(0x0951, 0x16B7) is null);
         Check("headset sem provider", registry.Resolve(0x291D, 0x385D) is null);
@@ -365,7 +412,11 @@ internal static class SelfTest
         var baixo = PanelView.Row(Dev("shark", BatteryReading.Percentage(15), live: true), 20, now);
         Check("abaixo do limite e' alerta", baixo.IsLow && baixo.Note == "abaixo de 20%");
         Check("ao vivo nao mostra idade", baixo.Age is null && !baixo.IsStale);
-        Check("no limite exato nao e' alerta", !PanelView.Row(Dev("x", BatteryReading.Percentage(20)), 20, now).IsLow);
+        Check("verde: 100% informando a carga", PanelView.Row(Dev("f", BatteryReading.Percentage(100, chargeText: "carregando")), 20, now).IsFull);
+        Check("verde: 100% sem informar a carga nao", !PanelView.Row(Dev("g", BatteryReading.Percentage(100)), 20, now).IsFull && !PanelView.Row(Dev("h", BatteryReading.Percentage(99, chargeText: "carregando")), 20, now).IsFull);
+        Check("abrir o painel le se passou de 1 h", PanelView.ReadOnOpen(now.AddMinutes(-61), now));
+        Check("abrir o painel nao le antes de 1 h nem sem leitura", !PanelView.ReadOnOpen(now.AddMinutes(-59), now) && !PanelView.ReadOnOpen(null, now));
+        Check("no limite exato nao e' alerta",!PanelView.Row(Dev("x", BatteryReading.Percentage(20)), 20, now).IsLow);
         var velho = PanelView.Row(Dev("rapoo", BatteryReading.Percentage(94, "software da Rapoo fechado", observedUtc: now.AddHours(-2))), 20, now);
         Check("sob demanda velho e' antigo", velho.IsStale && velho.Age == "há 2 h" && velho.Note == "software da Rapoo fechado");
         var recente = PanelView.Row(Dev("ds", BatteryReading.Percentage(100, observedUtc: now.AddMinutes(-3), chargeText: "carga completa")), 20, now);
@@ -535,6 +586,17 @@ internal static class SelfTest
             HidRequest.Feature(feature, hello, TimeSpan.Zero, _ => false);
             Check("so escutar: nenhuma pergunta, nem por feature, mesmo com licenca", HidRequest.Sent == s0);
 
+            // 2026-11-16 (PR #36): leitura ao vivo nunca pergunta, nem com licenca
+            HidRequest.NewReading(false, SelfTestVid);
+            HidRequest.Live = true;
+            gate.Ask(vendor, hello, _ => true, TimeSpan.Zero);
+            HidRequest.Feature(feature, hello, TimeSpan.Zero, _ => false);
+            HidRequest.Live = false;
+            Check("ao vivo: nenhuma pergunta, nem por feature, mesmo com licenca", HidRequest.Sent == s0);
+            gate.Ask(vendor, hello, _ => true, TimeSpan.Zero);
+            Check("ao vivo: a leitura sob demanda volta a perguntar", HidRequest.Sent == s0 + 1);
+            s0 = HidRequest.Sent;
+
             var razer = new HidCollection { Path = vendor.Path, Vid = 0x1532, Pid = 0x00B7, UsagePage = 0xFF00, Usage = 0x01, InputLen = 20, OutputLen = 20, FeatureLen = 90, Product = "teste" };
             HidRequest.NewReading(false, SelfTestVid);
             gate.Ask(razer, hello, _ => true, TimeSpan.Zero);
@@ -585,6 +647,13 @@ internal static class SelfTest
         bool english = PanelView.Age(TimeSpan.FromMinutes(5)) == "5 min ago" && PanelView.Age(TimeSpan.FromSeconds(1)) == "now";
         L.Set("pt");
         Check("idioma: modo ingles troca os textos e o portugues volta", english && PanelView.Age(TimeSpan.FromMinutes(5)) == "há 5 min");
+        L.Set("fr");
+        Check("idioma: frances traduz textos e intervalos", L.T("Configurações", "Settings") != "Settings" && PanelView.Age(TimeSpan.FromMinutes(5)) == "il y a 5 min");
+        L.Set("ru");
+        Check("idioma: russo traduz textos e intervalos", L.T("Configurações", "Settings") == "Настройки" && PanelView.Age(TimeSpan.FromMinutes(5)) == "5 мин назад");
+        var russianNoData = new DeviceEntry { Key = "ru", DisplayName = "AJAZZ", Reading = BatteryReading.NoData(L.T("o receptor não respondeu", "the receiver didn’t answer")), IsConnected = true };
+        Check("idioma: motivo sem dado inteiramente по-русски", PanelView.Reason(russianNoData) == "Сейчас нет данных: ресивер не ответил.");
+        L.Set("pt");
 
         // --- tela depois de atualizar (2026-11-12) ---
         Check("apoio: nao abre na primeira instalacao", Changes.UpdatedFrom("", "0.2.0", onboardingDone: false) is null);
@@ -599,7 +668,7 @@ internal static class SelfTest
         Check("apoio: link so do Stripe (ou vazio, sem botao)",
             BatteryTray.Ui.AppInfo.SupportUrl.Length == 0 || BatteryTray.Ui.AppInfo.SupportUrl.StartsWith("https://buy.stripe.com/", StringComparison.Ordinal));
 
-        // Item 4 (2026-11-12): o main so do repositorio oficial; o Teste so da pasta deste PC (decisao do Dillan).
+        // Item 4 (2026-11-12): o main so do repositorio oficial; o Teste so da pasta deste PC.
         Check("atualizacao so do repositorio oficial DillanCidral/Joule",
             BatteryTray.Ui.AppInfo.UpdateFeed == "https://github.com/DillanCidral/Joule");
         Check(@"atualizacao do Joule Teste so de pasta local releases\teste",

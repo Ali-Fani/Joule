@@ -690,6 +690,8 @@
                                             <RadioButton x:Name="LanguageAuto" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="{ui:Tr 'Do Windows', 'Windows'}" />
                                             <RadioButton x:Name="LanguagePt" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="Português" />
                                             <RadioButton x:Name="LanguageEn" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="English" />
+                                            <RadioButton x:Name="LanguageFr" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="Français" />
+                                            <RadioButton x:Name="LanguageRu" GroupName="Language" Style="{StaticResource Segment}" Padding="4,6" Content="Русский" />
                                         </UniformGrid>
                                     </Border>
                                     <DockPanel x:Name="LanguageRestart" Margin="0,10,0,0" Visibility="Collapsed">
@@ -827,8 +829,8 @@
                                         <Path Style="{StaticResource Glyph}" Data="{x:Static ui:Icons.External}" Stroke="{DynamicResource Text.Tertiary}" />
                                     </Viewbox>
                                     <StackPanel>
-                                        <TextBlock Text="{ui:Tr 'Mandar meu aparelho', 'Send my device'}" />
-                                        <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'Algum aparelho não aparece? Mande os dados dele', 'A device is missing? Send its details'}" />
+                                        <TextBlock Text="{ui:Tr 'Enviar um aparelho', 'Submit a device'}" />
+                                        <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'Para o Joule aprender a ler um aparelho que não aparece', 'Help Joule learn a device that doesn’t show up'}" />
                                     </StackPanel>
                                 </DockPanel>
                             </Border>

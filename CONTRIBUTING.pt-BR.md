@@ -48,6 +48,14 @@ dotnet run --project src/BatteryTray -- --demo
   `BatteryTray`, o primeiro nome do projeto. Comentário em inglês em código
   novo é bem-vindo.
 
+## Traduções
+
+Cada língua tem um arquivo em `src/BatteryTray/Core/` (`French.cs`, `RussianTranslations.cs`), com o texto em inglês como chave. Texto que falta no arquivo aparece em inglês, então texto novo nunca quebra uma tradução.
+
+- Língua nova ou atualização grande vem de alguém nativo, ou passa pela revisão de um antes de entrar.
+- Diga no pull request se usou tradutor automático. Ele pode entrar marcado como tradução automática até alguém nativo revisar.
+- O README na sua língua também é bem-vindo (`README.<código>.md`).
+
 ## Licença
 
 Ao contribuir, você concorda que a sua contribuição fica sob a

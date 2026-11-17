@@ -121,10 +121,11 @@ public static class Theme
         res["Brand.Dot"] = Brush(AppInfo.IsTest ? "#FFB57BFF" : "#FFFFC21F");
         res["Level.Fill"] = Brush(IsDark ? "#FFE6E6E6" : "#FF1F1F1F");
         res["Level.Alert"] = Brush(IsDark ? "#FFFF99A4" : "#FFC42B1C");
+        res["Level.Full"] = Brush(IsDark ? "#FFC8E05A" : "#FF5F7A10"); // lima da identidade ("verde le como cheio"); no claro, escurecido para aparecer no fundo branco
 
         // Brasa (pagina de 2026-11-10): acende clara no comeco e some na ponta, como a logo.
         // Barra do painel, anel do widget e os icones de carregando e ao vivo. Muda a regra
-        // do nivel neutro dos tokens v2, a pedido do Dillan; o vermelho segue so na bateria baixa.
+        // do nivel neutro dos tokens v2; o vermelho segue so na bateria baixa.
         Color ember = ((SolidColorBrush)res["Accent.Text"]).Color;
         Color alert = ((SolidColorBrush)res["Level.Alert"]).Color;
         Color track = ((SolidColorBrush)res["Level.Track"]).Color;

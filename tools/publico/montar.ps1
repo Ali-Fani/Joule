@@ -1,7 +1,7 @@
 # Monta a pasta do repositorio publico (camada de seguranca, 2026-11-12):
 # copia so o que esta em tools\publico\LISTA.txt, poe por cima a documentacao
 # de out\publico e roda a varredura. Nao cria repositorio nem envia nada:
-# isso e' com o aval do Dillan.
+# isso so com o aval de quem mantem o projeto.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\publico\montar.ps1
 param([string]$Destino = 'out\repo-publico')

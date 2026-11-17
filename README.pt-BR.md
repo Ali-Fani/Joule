@@ -9,7 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-AGPL--3.0-FFC21F?labelColor=1D1B18" alt="Licença: AGPL-3.0"></a>
 </p>
 
-<p align="center"><img src="docs/images/bandeira-br.png" alt="" height="14"> <strong>Português</strong> · <a href="README.md"><img src="docs/images/bandeira-us.png" alt="" height="14"> English</a></p>
+<p align="center"><img src="docs/images/bandeira-br.png" alt="" height="14"> <strong>Português</strong> · <a href="README.md"><img src="docs/images/bandeira-us.png" alt="" height="14"> English</a> · <a href="README.fr.md"><img src="docs/images/bandeira-fr.png" alt="" height="14"> Français</a> · <a href="README.ru.md"><img src="docs/images/bandeira-ru.png" alt="" height="14"> Русский</a></p>
 
 <p align="center">
   <a href="https://github.com/DillanCidral/Joule/releases/latest/download/JouleApp-win-Setup.exe"><img src="https://img.shields.io/badge/Baixar_para_Windows-FFC21F?style=for-the-badge" alt="Baixar para Windows" height="40"></a>
@@ -32,8 +32,10 @@ está em **beta**.
 - **Aviso ao conectar**: quando um aparelho liga, o Joule mostra a bateria dele,
   no widget ou no aviso do Windows, com som se você quiser.
 - **Alerta de bateria baixa**, com o limite que você escolher.
-- **Português e inglês**: segue o idioma do Windows, e dá para trocar nas
-  Configurações.
+- **Português, inglês, francês e russo**: segue o idioma do Windows, e dá para trocar
+  nas Configurações. O francês e o russo foram traduzidos por quem usa o Joule.
+- **Verde quando completa**: aparelho que informa a carga fica verde no widget e
+  na bandeja ao chegar a 100%.
 - **Resumo depois de atualizar**: quantos aparelhos o Joule acompanhou e quantos
   avisos de bateria baixa deu, contados só no seu PC, e o que mudou na versão.
 
@@ -55,20 +57,31 @@ Baixe o `JouleApp-win-Setup.exe` pelo botão acima ou na
 |---|---|---|
 | Attack Shark R1 | dongle | ✅ conferido |
 | Rapoo MT760 Mini | dongle | ✅ conferido |
+| Razer BlackShark V3 | dongle | ✅ conferido |
+| Zaopin ZPW MAX (8K) | dongle | ✅ conferido |
+| Receptor AJAZZ 2.4G 8K | dongle | ✅ conferido |
+| AULA F75 | cabo (dongle ainda não testado) | ✅ conferido |
 | DualSense | cabo | ✅ conferido |
 | Controles Xbox | adaptador e cabo | ✅ conferido |
 | 8BitDo Ultimate 2C | cabo | ✅ conferido |
 | Qualquer aparelho Bluetooth cuja bateria o Windows já mostre em *Configurações > Bluetooth* | Bluetooth | ✅ conferido |
+| Mouses Logitech no LIGHTSPEED (PRO X 2 e outros) e no Unifying (MX Master 2S), SteelSeries Arctis 1 e Arctis 7, VXE R1 Pro Max, VGN IO Aurora | dongle | ✅ confirmado por usuários |
 | Logitech, Razer, SteelSeries, HyperX e Corsair: mouses, teclados e fones | dongle | 🧪 ainda não testado |
 | Umas 20 outras marcas: ATK, VXE, VGN, Pulsar, Dareu, AJAZZ, Lamzu, WLmouse, G-Wolves, Hitscan, K-Snake, Bytech, Motospeed, Keychron, Incott e outros modelos Attack Shark | dongle | 🧪 ainda não testado |
 
 🧪 quer dizer escrito a partir de documentação aberta de protocolo e ainda não
-testado em aparelho real. Se você tem um, é o seu relato que confirma. Lista
+testado em aparelho real. Se você tem um, é o seu relato que confirma.
+"Confirmado por usuários" quer dizer que alguém mandou uma captura mostrando o
+Joule lendo no PC dela. Lista
 completa: [docs/aparelhos-suportados.md](docs/aparelhos-suportados.md).
 
 ## Meu aparelho não está na lista
 
-Abra **Configurações > Mandar meu aparelho** dentro do Joule. Ele escuta por
+Antes, veja as [famílias de aparelhos](https://github.com/DillanCidral/Joule/issues?q=is%3Aissue%20is%3Aopen%20label%3Atracking): se o seu estiver lá, dê um 👍
+em vez de abrir outro relato. O Joule também mostra pedidos parecidos na hora
+de enviar.
+
+Abra **Configurações > Avançado > Enviar um aparelho** dentro do Joule. Ele escuta por
 30 segundos enquanto você usa o aparelho, mostra o que achou, tira os dados
 pessoais (número de série, endereço Bluetooth, nome do PC, nome de usuário) e
 salva um `.txt`. Quem manda o arquivo é você, num
@@ -82,8 +95,9 @@ Quer adicionar o aparelho você mesmo? Veja
 <summary><strong>O que o Joule faz com os seus aparelhos</strong></summary>
 
 - Lê quando você abre o app, quando você entra no Windows, quando você clica em
-  **Atualizar** e quando você liga ou conecta um aparelho (só esse aparelho, no
-  máximo uma vez a cada 10 segundos). Nunca fica perguntando em loop.
+  **Atualizar**, quando você liga ou conecta um aparelho (só esse aparelho, no
+  máximo uma vez a cada 10 segundos) e quando você abre o painel com a última
+  leitura tendo mais de uma hora. Nunca fica perguntando em loop.
 - Na maioria dos aparelhos ele só **escuta** o que o dongle ou o cabo já
   mandam, ou lê o número que o próprio Windows guardou (Bluetooth).
 - Para algumas marcas pelo dongle (Logitech, Razer, SteelSeries, HyperX,
@@ -118,6 +132,16 @@ O `--demo` mostra aparelhos de exemplo sem tocar em hardware nenhum. Mais em
 [docs/arquitetura.md](docs/arquitetura.md).
 
 </details>
+
+## Obrigado
+
+A versão 0.2.1 tem código e tradução da comunidade:
+[@Ali-Fani](https://github.com/Ali-Fani) (Razer BlackShark V3),
+[@wrldwideme](https://github.com/wrldwideme) (AULA F75, receptores AJAZZ e
+Zaopin e a tradução para o russo),
+[@TukaLeHibou](https://github.com/TukaLeHibou) (tradução para o francês), e o
+verde da bateria completa veio de uma ideia do Daniel Palma. Obrigado, e
+obrigado a todos que mandaram captura.
 
 ## Apoiar o Joule
 

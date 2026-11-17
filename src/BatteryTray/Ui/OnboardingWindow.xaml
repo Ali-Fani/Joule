@@ -104,7 +104,7 @@
                         </DockPanel>
                         <StackPanel Orientation="Horizontal" Margin="50,6,0,0">
                             <Button x:Name="SearchAgainButton" Style="{StaticResource OutlineButton}" Content="{ui:Tr 'Procurar de novo', 'Search again'}" Margin="0,0,8,0" />
-                            <Button x:Name="SendButton" Style="{StaticResource OutlineButton}" Content="{ui:Tr 'Mandar meu aparelho', 'Send my device'}" />
+                            <Button x:Name="SendButton" Style="{StaticResource OutlineButton}" Content="{ui:Tr 'Enviar um aparelho', 'Submit a device'}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -203,7 +203,7 @@
                         </Border>
                         <StackPanel>
                             <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Aparelho que não aparece', 'A device that doesn’t show up'}" />
-                            <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'Veja em “Mostrar outros”, no fim do painel: lá ficam os que o Joule achou mas ainda não sabe ler. Se nem lá ele aparecer, use “Mandar meu aparelho”, nas Configurações.', 'Check “Show others” at the bottom of the panel: that’s where devices Joule found but can’t read yet go. If it’s not there either, use “Send my device” in Settings.'}" />
+                            <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'Veja em “Mostrar outros”, no fim do painel: lá ficam os que o Joule achou mas ainda não sabe ler. Se nem lá ele aparecer, use “Enviar um aparelho”, nas Configurações.', 'Check “Show others” at the bottom of the panel: that’s where devices Joule found but can’t read yet go. If it’s not there either, use “Submit a device” in Settings.'}" />
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>

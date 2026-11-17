@@ -37,6 +37,7 @@
             <!-- Pontinhos e botoes: cada tela diz quais aparecem. -->
             <DockPanel DockPanel.Dock="Bottom" Margin="0,16,0,0">
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button x:Name="BackButton" Style="{StaticResource FlatButton}" Content="{ui:Tr 'Voltar', 'Back'}" Margin="0,0,8,0" />
                     <Button x:Name="SecondaryButton" Style="{StaticResource OutlineButton}" Margin="0,0,8,0" />
                     <Button x:Name="PrimaryButton" Style="{StaticResource AccentButton}" IsDefault="True" />
                 </StackPanel>
@@ -47,11 +48,14 @@
 
                 <!-- 1. Antes de comecar -->
                 <StackPanel>
-                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Mandar meu aparelho', 'Send my device'}" />
-                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'O Joule escuta seus aparelhos por 30 segundos. Você confere tudo antes de mandar.', 'Joule listens to your devices for 30 seconds. You check everything before sending.'}" Margin="0,0,0,16" />
-                    <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Quais aparelhos não aparecem?', 'Which devices don’t show up?'}" Margin="0,0,0,6" />
+                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Enviar um aparelho', 'Submit a device'}" />
+                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'O Joule registra por 30 segundos os dados que seus aparelhos enviam, para aprender a ler a bateria deles. Você revisa o arquivo antes de enviar.', 'Joule records the data your devices send for 30 seconds, to learn how to read their battery. You review the file before sending.'}" Margin="0,0,0,16" />
+                    <TextBlock Margin="0,0,0,6">
+                        <Run FontWeight="SemiBold" Text="{ui:Tr 'Aparelho que não aparece', 'Device that doesn’t show up'}" /><Run Text="  " /><Run FontSize="12" Foreground="{DynamicResource Text.Tertiary}" Text="{ui:Tr 'opcional', 'optional'}" />
+                    </TextBlock>
                     <StackPanel x:Name="NameRows" />
-                    <Button x:Name="AddNameButton" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="-8,6,0,18">
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" Text="{ui:Tr 'Se o programa da marca mostra a bateria, informe o valor. Ajuda a achar o número nos dados.', 'If the brand’s software shows the battery, enter the value. It helps find the number in the data.'}" />
+                    <Button x:Name="AddNameButton" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="-8,4,0,14">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Width="14" Height="14" Margin="0,0,6,0"><Path Style="{StaticResource Glyph}" Data="M10 4v12M4 10h12" Stroke="{DynamicResource Accent}" StrokeThickness="1.8" /></Viewbox>
                             <TextBlock Text="{ui:Tr 'Adicionar outro aparelho', 'Add another device'}" />
@@ -62,8 +66,8 @@
                             <Viewbox Width="18" Height="18"><Path Style="{StaticResource Glyph}" Data="M10 3v6M6 5.5a6 6 0 1 0 8 0" Stroke="{DynamicResource Text.Secondary}" /></Viewbox>
                         </Border>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Deixe todos ligados e conectados', 'Keep them all on and connected'}" />
-                            <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'Receptor USB espetado, ou Bluetooth pareado e conectado.', 'USB receiver plugged in, or Bluetooth paired and connected.'}" />
+                            <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Deixe os aparelhos ligados e conectados', 'Keep the devices on and connected'}" />
+                            <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'Receptor USB conectado, ou Bluetooth pareado e conectado.', 'USB receiver plugged in, or Bluetooth paired and connected.'}" />
                         </StackPanel>
                     </DockPanel>
                     <DockPanel Style="{StaticResource Point}" Margin="0">
@@ -71,16 +75,16 @@
                             <Viewbox Width="18" Height="18"><Path Style="{StaticResource Glyph}" Data="M4.5 4.5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1zM7.5 16.5h5M10 13.5v3" Stroke="{DynamicResource Text.Secondary}" /></Viewbox>
                         </Border>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Usa o programa da marca? Deixe aberto', 'Use the brand’s software? Keep it open'}" />
-                            <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'G HUB, Synapse, iCUE… Tem aparelho que só conta a bateria quando ele pergunta.', 'G HUB, Synapse, iCUE… Some devices only report their battery when that software asks.'}" />
+                            <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Deixe aberto o programa da marca', 'Keep the brand’s software open'}" />
+                            <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'G HUB, Synapse, iCUE… Alguns aparelhos só informam a bateria quando o programa pede.', 'G HUB, Synapse, iCUE… Some devices only report their battery when that software asks.'}" />
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>
 
                 <!-- 2. Use o aparelho agora -->
                 <StackPanel Visibility="Hidden">
-                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Use o aparelho agora', 'Use the device now'}" />
-                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'Parado, muito aparelho não manda nada. Enquanto o tempo corre:', 'Many devices send nothing while idle. While the timer runs:'}" Margin="0,0,0,22" />
+                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Use os aparelhos agora', 'Use the devices now'}" />
+                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'Aparelhos parados costumam não enviar dados. Durante a contagem:', 'Idle devices usually send no data. During the countdown:'}" Margin="0,0,0,22" />
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                         <TextBlock x:Name="SecondsText" FontSize="48" FontWeight="SemiBold" LineHeight="52" Typography.NumeralAlignment="Tabular" Text="30" />
                         <TextBlock Text="{ui:Tr 'segundos', 'seconds'}" Foreground="{DynamicResource Text.Secondary}" VerticalAlignment="Bottom" Margin="8,0,0,10" />
@@ -89,78 +93,108 @@
                         <Border x:Name="TimeFill" CornerRadius="3" Background="{DynamicResource Level.Fill}" HorizontalAlignment="Left" Width="0" />
                     </Border>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <Ellipse Width="6" Height="6" Fill="{DynamicResource Accent}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <Ellipse x:Name="LiveDot" Width="6" Height="6" Fill="{DynamicResource Accent}" Margin="0,0,8,0" VerticalAlignment="Center" />
                         <TextBlock x:Name="LiveText" FontSize="12" Foreground="{DynamicResource Text.Secondary}" Text="{ui:Tr 'Preparando…', 'Preparing…'}" />
                     </StackPanel>
                     <UniformGrid Columns="3">
                         <Border Style="{StaticResource Card}" Padding="12" Margin="0,0,4,0">
                             <StackPanel>
                                 <Viewbox Width="18" Height="18" HorizontalAlignment="Left"><Path Style="{StaticResource IconGlyph}" Data="{x:Static ui:Icons.Mouse}" Stroke="{DynamicResource Text.Secondary}" /></Viewbox>
-                                <TextBlock Style="{StaticResource Caption}" Foreground="{DynamicResource Text.Primary}" Margin="0,6,0,0" Text="{ui:Tr 'Mexa o mouse e role a rodinha', 'Move the mouse and scroll the wheel'}" />
+                                <TextBlock Style="{StaticResource Caption}" Foreground="{DynamicResource Text.Primary}" Margin="0,6,0,0" Text="{ui:Tr 'Mova o mouse e role a roda', 'Move the mouse and scroll the wheel'}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource Card}" Padding="12" Margin="4,0">
                             <StackPanel>
                                 <Viewbox Width="18" Height="18" HorizontalAlignment="Left"><Path Style="{StaticResource IconGlyph}" Data="{x:Static ui:Icons.Keyboard}" Stroke="{DynamicResource Text.Secondary}" /></Viewbox>
-                                <TextBlock Style="{StaticResource Caption}" Foreground="{DynamicResource Text.Primary}" Margin="0,6,0,0" Text="{ui:Tr 'Aperte teclas e botões do controle', 'Press keys and controller buttons'}" />
+                                <TextBlock Style="{StaticResource Caption}" Foreground="{DynamicResource Text.Primary}" Margin="0,6,0,0" Text="{ui:Tr 'Pressione teclas e botões do controle', 'Press keys and controller buttons'}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource Card}" Padding="12" Margin="4,0,0,0">
                             <StackPanel>
                                 <Viewbox Width="18" Height="18" HorizontalAlignment="Left"><Path Style="{StaticResource IconGlyph}" Data="{x:Static ui:Icons.Headset}" Stroke="{DynamicResource Text.Secondary}" /></Viewbox>
-                                <TextBlock Style="{StaticResource Caption}" Foreground="{DynamicResource Text.Primary}" Margin="0,6,0,0" Text="{ui:Tr 'Mexa no volume do fone', 'Change the headset volume'}" />
+                                <TextBlock Style="{StaticResource Caption}" Foreground="{DynamicResource Text.Primary}" Margin="0,6,0,0" Text="{ui:Tr 'Ajuste o volume do fone', 'Change the headset volume'}" />
                             </StackPanel>
                         </Border>
                     </UniformGrid>
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,12,0,0" Text="{ui:Tr 'Não digite senhas durante a escuta.', 'Don’t type passwords while listening.'}" />
                 </StackPanel>
 
                 <!-- 3. O que achei -->
                 <StackPanel Visibility="Hidden">
-                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'O que achei', 'What I found'}" />
-                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'O seu está aqui? Se não estiver, pode mandar mesmo assim.', 'Is yours here? If not, you can send it anyway.'}" Margin="0,0,0,14" />
-                    <TextBlock x:Name="ReadLabel" Style="{StaticResource GroupLabel}" Text="{ui:Tr 'Já sei ler', 'Can read'}" />
+                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Aparelhos encontrados', 'Devices found'}" />
+                    <TextBlock x:Name="FoundLead" Style="{StaticResource Lead}" Margin="0,0,0,14" />
+                    <TextBlock x:Name="ReadLabel" Style="{StaticResource GroupLabel}" Text="{ui:Tr 'Compatíveis', 'Supported'}" />
                     <StackPanel x:Name="ReadList" Margin="0,0,0,10" />
-                    <TextBlock x:Name="UnknownLabel" Style="{StaticResource GroupLabel}" Text="{ui:Tr 'Achei, mas ainda não sei ler', 'Found, but can’t read yet'}" />
+                    <TextBlock x:Name="UnknownLabel" Style="{StaticResource GroupLabel}" Text="{ui:Tr 'Ainda sem suporte', 'Not supported yet'}" />
                     <StackPanel x:Name="UnknownList" />
-                    <TextBlock Style="{StaticResource Caption}" Margin="0,14,0,0" Text="{ui:Tr 'Os nomes são os que o próprio aparelho dá ao Windows, por isso nem sempre batem com a caixa.', 'The names are the ones each device gives Windows, so they don’t always match the box.'}" />
+                    <StackPanel x:Name="Legend" Orientation="Horizontal" Margin="0,6,0,0">
+                        <Ellipse Width="7" Height="7" Fill="{DynamicResource Accent}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'enviou dados', 'sent data'}" Margin="0,0,16,0" />
+                        <Ellipse Width="7" Height="7" Stroke="{DynamicResource Text.Tertiary}" StrokeThickness="1.5" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Style="{StaticResource Caption}" Text="{ui:Tr 'não enviou', 'sent nothing'}" />
+                    </StackPanel>
+                    <Border x:Name="QuietHint" Style="{StaticResource Card}" Margin="0,10,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="QuietText" TextWrapping="Wrap" FontSize="12" LineHeight="17" />
+                    </Border>
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,14,0,0" Text="{ui:Tr 'Os nomes vêm do próprio aparelho e podem não coincidir com a embalagem. Se o seu não está na lista, continue: o arquivo leva todos os dados.', 'Names come from the device itself and may not match the box. If yours isn’t listed, continue: the file includes all the data.'}" />
                 </StackPanel>
 
                 <!-- 4. Confira o que vai -->
                 <StackPanel Visibility="Hidden">
-                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Confira o que vai', 'Check what’s included'}" />
-                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'Pronto. O arquivo leva:', 'Done. The file includes:'}" Margin="0,0,0,14" />
+                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Revise o envio', 'Review the submission'}" />
+                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'O arquivo inclui:', 'The file includes:'}" Margin="0,0,0,14" />
                     <StackPanel x:Name="GoesList" />
                     <Border Style="{StaticResource Card}" Margin="0,10,0,0">
                         <StackPanel>
-                            <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Tiramos antes de mandar', 'Removed before sending'}" Margin="0,0,0,8" />
+                            <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Removido do arquivo', 'Removed from the file'}" Margin="0,0,0,8" />
                             <UniformGrid x:Name="RemovedGrid" Columns="2" />
                             <ContentControl x:Name="RemovedPhones" />
                         </StackPanel>
                     </Border>
                     <Button x:Name="NotepadButton" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="-8,10,0,0" Content="{ui:Tr 'Abrir o arquivo no Bloco de Notas', 'Open the file in Notepad'}" />
-                    <TextBlock x:Name="WhereNote" Style="{StaticResource Caption}" Margin="0,12,0,0" />
+                    <StackPanel x:Name="SendChoice" Margin="0,12,0,0">
+                        <TextBlock Style="{StaticResource PointTitle}" Text="{ui:Tr 'Enviar por', 'Send via'}" Margin="0,0,0,8" />
+                        <UniformGrid Columns="2">
+                            <RadioButton x:Name="ViaGitHub" Style="{StaticResource ChoiceCard}" GroupName="Via" IsChecked="True" Margin="0,0,4,0">
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="GitHub" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" Text="{ui:Tr 'Relato público. Quem tem o mesmo aparelho acompanha. Requer conta.', 'Public report. Anyone with the same device can follow it. Needs an account.'}" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="ViaEmail" Style="{StaticResource ChoiceCard}" GroupName="Via" Margin="4,0,0,0">
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="{ui:Tr 'E-mail', 'Email'}" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" Text="{ui:Tr 'Só a equipe do Joule vê. A resposta chega por e-mail.', 'Only the Joule team sees it. The reply comes by email.'}" />
+                                </StackPanel>
+                            </RadioButton>
+                        </UniformGrid>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- 5a. Falta um passo no GitHub -->
                 <StackPanel Visibility="Hidden">
-                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Falta um passo no navegador', 'One more step in the browser'}" />
-                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'Abrimos um relato novo no GitHub do Joule, com o título e o texto já preenchidos.', 'We opened a new report on Joule’s GitHub, with the title and text already filled in.'}" Margin="0,0,0,10" />
+                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Conclua no navegador', 'Finish in the browser'}" />
+                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'A página de relato do GitHub foi aberta com título e descrição preenchidos.', 'The GitHub report page opened with the title and description filled in.'}" Margin="0,0,0,10" />
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
                         <Viewbox Width="14" Height="14" Margin="0,0,8,0"><Path Style="{StaticResource Glyph}" Data="M10 2.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15zM2.5 10h15M10 2.5c2 2 3 4.5 3 7.5s-1 5.5-3 7.5c-2-2-3-4.5-3-7.5s1-5.5 3-7.5z" Stroke="{DynamicResource Text.Tertiary}" /></Viewbox>
                         <TextBlock x:Name="RepoText" Style="{StaticResource Caption}" />
                     </StackPanel>
+                    <TextBlock x:Name="SimilarNote" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,0,0,14">
+                        <Run Text="{ui:Tr 'Seu aparelho pode já ter um pedido aberto.', 'Your device may already have an open request.'}" />
+                        <Hyperlink x:Name="SimilarLink" Foreground="{DynamicResource Accent.Text}"><Run Text="{ui:Tr 'Ver pedidos parecidos', 'See similar requests'}" /></Hyperlink><Run Text="{ui:Tr ' e, se houver, apoie com 👍 em vez de abrir outro.', ' and, if there is one, support it with 👍 instead of opening another.'}" />
+                    </TextBlock>
                     <StackPanel x:Name="StepsList" Margin="0,0,0,18" />
                     <ContentControl x:Name="GitChipSlot" />
                     <TextBlock x:Name="NoAccountNote" Style="{StaticResource Caption}" Margin="0,16,0,0">
                         <Run Text="{ui:Tr 'Sem conta no GitHub?', 'No GitHub account?'}" />
-                        <Hyperlink x:Name="ToEmailLink" Foreground="{DynamicResource Accent}"><Run Text="{ui:Tr 'Mande por e-mail', 'Send it by email'}" /></Hyperlink><Run Text="." />
+                        <Hyperlink x:Name="ToEmailLink" Foreground="{DynamicResource Accent.Text}"><Run Text="{ui:Tr 'Enviar por e-mail', 'Send by email'}" /></Hyperlink><Run Text="." />
                     </TextBlock>
                 </StackPanel>
 
                 <!-- 5b. Falta mandar o e-mail -->
                 <StackPanel Visibility="Hidden">
-                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Falta mandar o e-mail', 'The email still needs sending'}" />
-                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'Escolha onde você usa e-mail. Ele abre já com o endereço e o assunto; só falta anexar o arquivo.', 'Choose where you use email. It opens with the address and subject filled in; you only need to attach the file.'}" Margin="0,0,0,16" />
+                    <TextBlock Style="{StaticResource Title}" Text="{ui:Tr 'Conclua no e-mail', 'Finish in your email'}" />
+                    <TextBlock Style="{StaticResource Lead}" Text="{ui:Tr 'Escolha o serviço de e-mail. A mensagem abre com destinatário e assunto preenchidos; falta anexar o arquivo.', 'Choose your email service. The message opens with the recipient and subject filled in; you only need to attach the file.'}" Margin="0,0,0,16" />
                     <UniformGrid x:Name="MailButtons" Rows="1" Margin="0,0,0,8">
                         <Button x:Name="GmailButton" Style="{StaticResource OutlineButton}" Height="40" Margin="0,0,4,0" Content="Gmail" />
                         <Button x:Name="OutlookButton" Style="{StaticResource OutlineButton}" Height="40" Margin="4,0" Content="Outlook" />
@@ -171,7 +205,7 @@
                         <TextBlock x:Name="AddressText" Style="{StaticResource Caption}" VerticalAlignment="Center" />
                     </DockPanel>
                     <ContentControl x:Name="MailChipSlot" />
-                    <TextBlock Style="{StaticResource Caption}" Margin="0,16,0,0" Text="{ui:Tr 'Por e-mail, só a gente vê. Respondemos por lá quando o aparelho entrar numa versão.', 'By email, only we see it. We’ll reply there when the device makes it into a version.'}" />
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,16,0,0" Text="{ui:Tr 'Por e-mail, só a equipe do Joule vê o arquivo. A resposta chega quando o aparelho entrar em uma versão.', 'By email, only the Joule team sees the file. The reply comes when the device makes it into a version.'}" />
                 </StackPanel>
             </Grid>
         </DockPanel>

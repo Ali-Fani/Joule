@@ -47,6 +47,15 @@ public sealed class HidRequest : IDisposable
     internal static readonly HashSet<ushort> Tested = new();
 
     private static volatile bool _listenOnly;
+    private static volatile bool _live;
+
+    /// <summary>
+    /// Leitura ao vivo em curso (escuta viu valor novo, Bluetooth de 60 s): a porta recusa
+    /// toda pergunta, porque ao vivo e' so o que nao toca no aparelho (regra 1). Achado em
+    /// 2026-11-16 no PR #36: o Read do BlackShark perguntava a cada aviso das escutas.
+    /// So o ReadingService chama.
+    /// </summary>
+    internal static bool Live { get => _live; set => _live = value; }
     private static volatile HashSet<ushort> _allowed = new();
     private static readonly ConcurrentDictionary<ushort, string> _waiting = new();
 
@@ -74,7 +83,7 @@ public sealed class HidRequest : IDisposable
     /// <summary>A camada de seguranca (2026-11-12): "So escutar", modelo bloqueado e marca nao testada sem licenca. Recusa antes de contar no teto.</summary>
     private static bool Permitted(HidCollection c)
     {
-        if (_listenOnly || Blocked.Contains(c.HardwareId)) return false;
+        if (_live || _listenOnly || Blocked.Contains(c.HardwareId)) return false;
         if (Tested.Contains(c.Vid) || _allowed.Contains(c.Vid)) return true;
         if (_waiting.TryAdd(c.Vid, c.Product)) Log.Write($"Marca {c.Vid:X4} ({c.Product}) sem licenca para perguntar a bateria: nada enviado.");
         return false;
@@ -211,7 +220,20 @@ public sealed class HidRequest : IDisposable
         if (handle == INVALID_HANDLE_VALUE) return null;
         try
         {
-            if (!HidD_SetFeature(handle, (byte[])request.Clone(), request.Length)) return null;
+            // Most HID drivers accept feature reports on a metadata-only handle,
+            // but some GearHub receivers require explicit read/write access.
+            // Retry only the same caller-supplied battery request.
+            // shortcut: experimento do PR #56 aberto por uma versao (2026-11-16, regras 2 e 4 da SEGURANCA.md); revisar o log na proxima versao e manter, restringir ao GearHub ou tirar.
+            if (!HidD_SetFeature(handle, (byte[])request.Clone(), request.Length))
+            {
+                if (OverCap()) return null; // a segunda batida conta no teto de 48 como qualquer pergunta
+                Log.Write($"Feature em {target.HardwareId} recusada com acesso 0: segunda tentativa com leitura e escrita (experimento PR #56).");
+                CloseHandle(handle);
+                handle = CreateFile(target.Path, GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+                if (handle == INVALID_HANDLE_VALUE || !HidD_SetFeature(handle, (byte[])request.Clone(), request.Length))
+                    return null;
+            }
             for (int i = 0; i < reads; i++)
             {
                 Thread.Sleep(wait);
@@ -224,7 +246,7 @@ public sealed class HidRequest : IDisposable
         }
         finally
         {
-            CloseHandle(handle);
+            if (handle != INVALID_HANDLE_VALUE) CloseHandle(handle);
         }
     }
 

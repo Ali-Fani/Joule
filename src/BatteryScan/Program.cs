@@ -24,6 +24,14 @@ internal static class Program
     {
         try { Console.OutputEncoding = Encoding.UTF8; } catch { /* console antigo */ }
 
+        int check = Array.FindIndex(args, a => a.Equals("--verificar", StringComparison.OrdinalIgnoreCase));
+        if (check >= 0)
+        {
+            if (check + 1 >= args.Length) { Console.WriteLine("uso: JouleScan.exe --verificar arquivo [--origem texto]"); return 2; }
+            int origin = Array.FindIndex(args, a => a.Equals("--origem", StringComparison.OrdinalIgnoreCase));
+            return SubmissionCheck.Run(args[check + 1], origin >= 0 && origin + 1 < args.Length ? args[origin + 1] : "");
+        }
+
         var options = ScanOptions.Parse(args);
 
         if (options.Help)
@@ -279,6 +287,7 @@ internal static class Program
         Console.WriteLine("  JouleScan.exe --out C:\\pasta    onde gravar os arquivos");
         Console.WriteLine("  JouleScan.exe --quiet          sem perguntas nem pausa no fim");
         Console.WriteLine("  JouleScan.exe --selftest       testa as partes puras, sem tocar em hardware");
+        Console.WriteLine("  JouleScan.exe --verificar f    confere um envio recebido (--origem texto vai no catalogo)");
         Console.WriteLine();
         Console.WriteLine("Nada e' enviado aos aparelhos sem a sua licenca; com --quiet, nada e' enviado.");
     }

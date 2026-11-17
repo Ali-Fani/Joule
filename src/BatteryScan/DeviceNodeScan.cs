@@ -69,6 +69,9 @@ public static class DeviceNodeScan
         "USB", "USBHUB3", "SWD", "ACPI",
     };
 
+    /// <summary>Classe ou enumerador que pode carregar bateria (o despejo completo). O envio do app so leva esses.</summary>
+    public static bool BatteryRelated(DeviceNodeInfo n) => DeepClasses.Contains(n.Class) || DeepEnumerators.Contains(n.Enumerator);
+
     public static List<DeviceNodeInfo> Collect(List<string> warnings, out int skipped)
     {
         var result = new List<DeviceNodeInfo>();

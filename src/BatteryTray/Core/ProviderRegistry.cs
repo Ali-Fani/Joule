@@ -39,6 +39,7 @@ public sealed class ProviderRegistry
         {
             new AttackSharkProvider(),
             new RapooProvider(),
+            new BlackSharkProvider(),
             new IncottProvider(),
             new DualSenseProvider(),
         },
@@ -51,6 +52,7 @@ public sealed class ProviderRegistry
             new SteelSeriesProvider(),
             new HyperXProvider(),
             new CorsairProvider(),
+            new AulaF75Provider(),
             new CompxProvider(),
             new ChineseBrandsProvider(),
         });

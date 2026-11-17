@@ -249,6 +249,10 @@ public sealed class TrayController : IDisposable
     {
         var panel = new PanelWindow(_settings);
         panel.RefreshRequested += () => BeginRefresh();
+        panel.IsVisibleChanged += (_, e) =>
+        {
+            if (e.NewValue is true && PanelView.ReadOnOpen(_last?.WhenUtc, DateTime.UtcNow)) BeginRefresh();
+        };
         panel.OnboardingRequested += ShowOnboarding;
         panel.SendDeviceRequested += ShowSendDevice;
         panel.NotifySampleRequested += ShowNotifySample;
@@ -467,7 +471,9 @@ public sealed class TrayController : IDisposable
         // O icone mostra o aparelho mais fraco entre os que tem numero.
         int? weakest = rows.Where(r => r.ValueKind == ValueKind.Percent).Select(r => (int?)r.Percent).Min();
 
-        SetTrayIcon(TrayIconFactory.Create(weakest, _settings.LowBatteryThreshold));
+        // Verde so quando todos os que tem numero estao em 100% informando a carga (o icone fala do mais fraco).
+        bool full = rows.Where(r => r.ValueKind == ValueKind.Percent).ToList() is { Count: > 0 } pct && pct.All(r => r.IsFull);
+        SetTrayIcon(TrayIconFactory.Create(weakest, _settings.LowBatteryThreshold, full: full));
         _tray.Text = TooltipText(rows);
     }
 

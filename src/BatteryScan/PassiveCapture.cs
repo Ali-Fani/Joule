@@ -123,6 +123,7 @@ public static class PassiveCapture
         }
 
         foreach (var acc in accumulators) info.Groups.AddRange(acc.Build());
+        DropKeyboardSamples(info, collections);
 
         info.Groups = info.Groups
             .OrderByDescending(g => g.Bytes.Count(b => b.BatteryCandidate))
@@ -130,6 +131,60 @@ public static class PassiveCapture
             .ToList();
 
         return info;
+    }
+
+    /// <summary>
+    /// Aparelho que tem teclado (0x01/0x06 ou teclado numerico 0x01/0x07) nao
+    /// leva amostras cruas: colecao de fabricante de teclado pode carregar
+    /// teclas (NKRO), e a tela pede para apertar teclas (revisao de 2026-11-14).
+    /// Min/max por byte continuam: nao contam a sequencia digitada.
+    /// </summary>
+    internal static void DropKeyboardSamples(CaptureInfo info, IEnumerable<HidCollection> collections)
+    {
+        var keyboards = collections.Where(c => c.UsagePage == 0x01 && c.Usage is 0x06 or 0x07)
+            .Select(c => c.HardwareId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var g in info.Groups.Where(g => keyboards.Contains(g.HardwareId))) g.Samples.Clear();
+    }
+
+    /// <summary>
+    /// "Escutar de novo" soma a escuta nova a anterior (2026-11-14): aparelho
+    /// que so falou na primeira nao some do arquivo.
+    /// shortcut: Distinct vira o maior dos dois (o conjunto de valores nao e' guardado); se a analise precisar do numero exato, guardar os valores no CaptureByteStat.
+    /// </summary>
+    internal static CaptureInfo Merge(CaptureInfo? before, CaptureInfo now)
+    {
+        if (before is null) return now;
+        var merged = new CaptureInfo
+        {
+            Seconds = before.Seconds + now.Seconds,
+            CollectionsOpened = Math.Max(before.CollectionsOpened, now.CollectionsOpened),
+            CollectionsSkipped = now.CollectionsSkipped,
+            SkippedReasons = now.SkippedReasons,
+        };
+        foreach (var g in before.Groups.Concat(now.Groups)
+            .GroupBy(g => (g.HardwareId.ToUpperInvariant(), g.Path.ToUpperInvariant(), g.ReportId, g.Length)))
+        {
+            var parts = g.ToList();
+            if (parts.Count == 1) { merged.Groups.Add(parts[0]); continue; }
+            var (a, b) = (parts[0], parts[1]);
+            merged.Groups.Add(new CaptureGroup
+            {
+                HardwareId = a.HardwareId, DeviceName = a.DeviceName, Path = a.Path, UsagePage = a.UsagePage,
+                ReportId = a.ReportId, Length = a.Length, Count = a.Count + b.Count,
+                Samples = a.Samples.Concat(b.Samples).Distinct().Take(MaxSamplesPerGroup).ToList(),
+                Bytes = a.Bytes.Zip(b.Bytes, (x, y) =>
+                {
+                    var stat = new CaptureByteStat { Offset = x.Offset, Min = Math.Min(x.Min, y.Min), Max = Math.Max(x.Max, y.Max), Distinct = Math.Max(x.Distinct, y.Distinct) };
+                    stat.BatteryCandidate = stat.Offset > 0 && stat.Constant && stat.Min is >= 1 and <= 100;
+                    return stat;
+                }).ToList(),
+            });
+        }
+        merged.Groups = merged.Groups
+            .OrderByDescending(g => g.Bytes.Count(b => b.BatteryCandidate))
+            .ThenByDescending(g => g.Count)
+            .ToList();
+        return merged;
     }
 
     /// <summary>Menor = mais interessante. Vendor-defined e paginas de energia na frente.</summary>

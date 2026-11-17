@@ -14,7 +14,7 @@ namespace BatteryTray.Ui;
 /// </summary>
 public partial class SupportWindow : WizardWindow
 {
-    // A frase do cafe sorteia um comeco e um final (pedido do Dillan, 2026-11-12).
+    // A frase do cafe sorteia um comeco e um final (2026-11-12).
     private static readonly (string Pt, string En)[] Saves =
     {
         ("de um mouse apagado no meio da partida", "a dead mouse mid-match"),
@@ -68,6 +68,7 @@ public partial class SupportWindow : WizardWindow
         Phrase.Visibility = _hasLink ? Visibility.Visible : Visibility.Collapsed;
 
         foreach (var c in changes) ChangesList.Children.Add(ChangeRow(c));
+        if (changes.Any(c => c.Version == Changes.ThanksVersion)) { ThanksText.Text = Changes.Thanks; ThanksText.Visibility = Visibility.Visible; }
 
         LaterButton.Click += (_, _) => Next();
         NextButton.Click += (_, _) => Next();
@@ -105,6 +106,7 @@ public partial class SupportWindow : WizardWindow
         var text = new StackPanel();
         text.Children.Add(new TextBlock { Style = (Style)FindResource("PointTitle"), Text = c.Title });
         text.Children.Add(new TextBlock { Style = (Style)FindResource("Caption"), Text = c.Text });
+        if (c.Credit.Length > 0) text.Children.Add(new TextBlock { Style = (Style)FindResource("Caption"), Text = c.Credit, Foreground = (Brush)FindResource("Accent.Text"), Margin = new Thickness(0, 2, 0, 0) });
         dock.Children.Add(text);
         return dock;
     }

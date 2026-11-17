@@ -304,9 +304,6 @@ public partial class PanelWindow : Window
         UpdateButton.IsEnabled = enabled;
     }
 
-    private static bool WouldBeEnglish(string choice) =>
-        choice switch { "en" => true, "pt" => false, _ => System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != "pt" };
-
     private void OnCreditClick(object sender, RoutedEventArgs e) => TrayController.OpenExternal((string)((FrameworkElement)sender).Tag);
 
     private void LoadSettings()
@@ -323,10 +320,12 @@ public partial class PanelWindow : Window
             ThresholdSlider.Value = _settings.LowBatteryThreshold;
             ThresholdValue.Text = $"{_settings.LowBatteryThreshold}%";
             AutostartSwitch.IsChecked = Autostart.IsEnabled();
-            LanguageAuto.IsChecked = _settings.Language is not ("pt" or "en");
+            LanguageAuto.IsChecked = _settings.Language is not ("pt" or "en" or "fr" or "ru");
             LanguagePt.IsChecked = _settings.Language == "pt";
             LanguageEn.IsChecked = _settings.Language == "en";
-            LanguageRestart.Visibility = WouldBeEnglish(_settings.Language) != L.En ? Visibility.Visible : Visibility.Collapsed;
+            LanguageFr.IsChecked = _settings.Language == "fr";
+            LanguageRu.IsChecked = _settings.Language == "ru";
+            LanguageRestart.Visibility = L.Resolve(_settings.Language) != L.Code ? Visibility.Visible : Visibility.Collapsed;
 
             var requested = Theme.Parse(_settings.Appearance);
             AppearanceGlass.IsChecked = requested == Appearance.Glass;
@@ -421,6 +420,8 @@ public partial class PanelWindow : Window
         LanguageAuto.Checked += (_, _) => Changed(() => _settings.Language = "auto");
         LanguagePt.Checked += (_, _) => Changed(() => _settings.Language = "pt");
         LanguageEn.Checked += (_, _) => Changed(() => _settings.Language = "en");
+        LanguageFr.Checked += (_, _) => Changed(() => _settings.Language = "fr");
+        LanguageRu.Checked += (_, _) => Changed(() => _settings.Language = "ru");
         RestartButton.Click += (_, _) => RestartRequested?.Invoke();
 
         void SetAppearance(Appearance a) => Changed(() =>
@@ -663,5 +664,6 @@ public sealed record Credit(string Name, string Use, string License, string Url)
         new("rivalcfg", L.T("Mouses SteelSeries", "SteelSeries mice"), "", "https://github.com/flozz/rivalcfg"),
         new("Pulsefire Dart RE", "HyperX Pulsefire Dart", "", "https://github.com/santeri3700/hyperx_pulsefire_dart_reverse_engineering"),
         new("RazerNariBatteryLevel", L.T("Fone Razer Nari", "Razer Nari headset"), "", "https://github.com/Modzeleczek/RazerNariBatteryLevel"),
+        new("sanshoku", L.T("Teclado AULA F75", "AULA F75 keyboard"), "", "https://github.com/ushineko/sanshoku"),
     };
 }

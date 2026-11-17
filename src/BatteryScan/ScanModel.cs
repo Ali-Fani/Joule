@@ -9,6 +9,9 @@ public sealed class ScanReport
 {
     public string Tool { get; set; } = "JouleScan";
     public string Version { get; set; } = ScanInfo.Version;
+
+    /// <summary>Versao do Joule que gerou ("Mandar meu aparelho"); null no JouleScan.</summary>
+    public string? AppVersion { get; set; }
     public DateTime GeneratedLocal { get; set; } = DateTime.Now;
     public DateTime GeneratedUtc { get; set; } = DateTime.UtcNow;
 
@@ -24,6 +27,12 @@ public sealed class ScanReport
     /// <summary>Aparelhos que a pessoa disse que nao aparecem ("Mandar meu aparelho").</summary>
     public List<string>? ReportedDevices { get; set; }
 
+    /// <summary>Bateria que a pessoa leu no programa da marca, por nome citado (formato 1.1, 2026-11-14).</summary>
+    public Dictionary<string, int>? ReportedBattery { get; set; }
+
+    /// <summary>VID:PID que a pessoa marcou como o aparelho dela na lista (formato 1.1).</summary>
+    public List<string>? PointedDevices { get; set; }
+
     /// <summary>Linhas do resumo: onde ha caminho de bateria plausivel.</summary>
     public List<CandidateInfo> Candidates { get; set; } = new();
 
@@ -33,7 +42,7 @@ public sealed class ScanReport
 
 public static class ScanInfo
 {
-    public const string Version = "1.0";
+    public const string Version = "1.1"; // 1.1: ReportedBattery e PointedDevices
 }
 
 public sealed class SystemInfo

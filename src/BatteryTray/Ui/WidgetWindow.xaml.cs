@@ -625,7 +625,7 @@ public sealed class RingItem
         RingOpacity = v.IsStale ? 0.55 : 1;
         DotRing = new SolidColorBrush(Theme.IsDark ? Color.FromRgb(0x17, 0x18, 0x1B) : Color.FromRgb(0xF3, 0xF3, 0xF3));
 
-        ArcBrush = RowItem.R(v.IsLow ? "Level.Alert" : v.IsStale ? "Level.Stale" : "Accent.Text");
+        ArcBrush = RowItem.R(v.IsLow ? "Level.Alert" : v.IsStale ? "Level.Stale" : v.IsFull ? "Level.Full" : "Accent.Text");
         ArcCap = PenLineCap.Flat;
 
         switch (v.ValueKind)

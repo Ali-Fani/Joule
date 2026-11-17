@@ -5,7 +5,7 @@
 #   powershell -File tools\release.ps1 main -Versao 1.2.0
 #   powershell -File tools\release.ps1 publicar   # manda ao GitHub a ultima versao do main ja gerada
 #
-# publicar: so com o aval do Dillan na hora (regra 9 do CLAUDE.md). Envia a ultima versao de
+# publicar: so com o aval de quem mantem o projeto, na hora. Envia a ultima versao de
 # releases\main ao GitHub Releases do repositorio oficial (o atualizador do main busca la),
 # publicada e estavel, com o SHA256SUMS junto. O token vem do gh (gh auth login), nunca do disco.
 #

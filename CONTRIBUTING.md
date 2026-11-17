@@ -47,6 +47,14 @@ dotnet run --project src/BatteryTray -- --demo
 - Code comments are in Portuguese and the namespaces are still `BatteryTray`,
   the project's first name. English comments in new code are fine.
 
+## Translations
+
+Each language has one file in `src/BatteryTray/Core/` (`French.cs`, `RussianTranslations.cs`), keyed by the English text. A text missing from the file shows in English, so new texts never break a translation.
+
+- A new language or a big update comes from a native speaker, or is reviewed by one before it is merged.
+- Say in the pull request if you used a machine translator. It can still be merged, marked as machine-translated, until a native speaker reviews it.
+- The README in your language is welcome too (`README.<code>.md`).
+
 ## License
 
 By contributing you agree that your contribution is licensed under

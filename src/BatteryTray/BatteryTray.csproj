@@ -65,7 +65,7 @@
 
   <ItemGroup>
     <!-- "Mandar meu aparelho": a coleta do JouleScan, mesmo codigo, sem o console. -->
-    <Compile Include="..\BatteryScan\*.cs" Exclude="..\BatteryScan\Program.cs;..\BatteryScan\ScanSelfTest.cs" LinkBase="Scan" />
+    <Compile Include="..\BatteryScan\*.cs" Exclude="..\BatteryScan\Program.cs;..\BatteryScan\ScanSelfTest.cs;..\BatteryScan\SubmissionCheck.cs" LinkBase="Scan" />
   </ItemGroup>
 
 </Project>

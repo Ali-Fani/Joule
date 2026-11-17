@@ -15,7 +15,7 @@ public static class TextReport
         var sb = new StringBuilder();
 
         sb.AppendLine("================================================================");
-        sb.AppendLine($" BATTERY SCAN {r.Version} - coleta de bateria de perifericos");
+        sb.AppendLine($" {r.Tool.ToUpperInvariant()}{(r.AppVersion is { } v ? " " + v : "")} - coleta de bateria de perifericos (formato {r.Version})");
         sb.AppendLine("================================================================");
         sb.AppendLine($" maquina : {r.System.MachineName}   usuario: {r.System.UserName}");
         sb.AppendLine($" sistema : {Or(r.System.OsCaption, r.System.OsVersion)}  {r.System.Architecture}");
@@ -25,8 +25,11 @@ public static class TextReport
         if (r.ReportedDevices is { Count: > 0 } named)
             sb.AppendLine($" nao aparecem: {string.Join(", ", named)}");
         sb.AppendLine();
-        sb.AppendLine(" Este arquivo e' somente leitura de metadados: nada foi escrito em");
-        sb.AppendLine(" nenhum dispositivo, nenhum pareamento foi criado ou desfeito.");
+        // (Corrigido em 2026-11-14: dizia "nada foi escrito", mas os providers perguntam a bateria desde 2026-11-04.)
+        sb.AppendLine(" O que o Windows sabe dos aparelhos e o que eles mandam sozinhos. A unica");
+        sb.AppendLine(" pergunta feita a um aparelho e' a de bateria, a mesma da leitura normal do");
+        sb.AppendLine(" Joule. Nenhum pareamento foi criado ou desfeito. Numero de serie, endereco");
+        sb.AppendLine($" Bluetooth, nome do PC e nome de usuario foram trocados por {ScanPrivacy.Mark}.");
         sb.AppendLine();
 
         RenderCandidates(sb, r);
@@ -40,8 +43,8 @@ public static class TextReport
         RenderWarnings(sb, r);
 
         sb.AppendLine();
-        sb.AppendLine("fim do relatorio. o .json ao lado tem tudo isto mais o dump completo");
-        sb.AppendLine("das propriedades de devnode.");
+        sb.AppendLine("fim do relatorio. O JSON que vai junto tem tudo isto e mais as");
+        sb.AppendLine("propriedades completas de cada devnode.");
         return sb.ToString();
     }
 

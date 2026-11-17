@@ -19,10 +19,27 @@ quer dizer que ele manda a pergunta de bateria uma vez por leitura (veja o
 | Attack Shark R1 | dongle | escuta | Atualiza sozinho enquanto o mouse está acordado. Mouse parado não manda nada |
 | Attack Shark R1 | cabo | presença | Mostra "carregando", sem percentual |
 | Rapoo MT760 Mini | dongle | escuta | O mouse só informa com o programa da Rapoo aberto; sem ele, o Joule mostra o último valor com a idade |
+| Razer BlackShark V3 | dongle | pergunta | Pergunta uma vez por leitura (conferido no aparelho); entre leituras guarda o que o fone informou sozinho, com a idade |
 | DualSense (PS5) | só no cabo | escuta | Por Bluetooth o controle só informa a bateria depois que o PC escreve nele, então esse caminho fica de fora |
 | Controles Xbox | adaptador, cabo | XInput | Faixa (baixa / média / cheia) pelo adaptador; "no cabo" quando plugado |
 | 8BitDo Ultimate 2C | cabo | XInput | Só "no cabo", sem percentual. Pelo dongle ele informa um valor falso, que o Joule descarta |
 | Qualquer aparelho Bluetooth | Bluetooth | lê o Windows | O mesmo número de *Configurações > Bluetooth*. Nada vai pelo rádio |
+| Zaopin ZPW MAX (8K) | receptor `3554:F527` | pergunta | Percentual confirmado no aparelho real |
+| AULA F75 | cabo `258A:010C` | presença | Mostra "no cabo", sem inventar um percentual |
+| AJAZZ 2.4G 8K | receptor GearHub-V5 `3151:402D` | pergunta | Estado `F7` do receptor; percentual confirmado no aparelho real |
+
+## Confirmados por usuários
+
+Escritos a partir de documentação aberta e confirmados por alguém que mandou
+uma captura mostrando o Joule lendo no próprio PC (novembro de 2026).
+
+| Aparelho | Conexão |
+|---|---|
+| Mouses Logitech no LIGHTSPEED (PRO X 2 e outros) | receptor LIGHTSPEED |
+| Logitech MX Master 2S | receptor Unifying |
+| SteelSeries Arctis 1 Wireless e Arctis 7 | dongle |
+| VXE R1 Pro Max | receptor `3554:F58A` |
+| VGN IO Aurora e Aurora Pro 8K | receptores `3554:FB08` e `3554:FB40` |
 
 ## Não testados
 
@@ -36,6 +53,7 @@ quer dizer que ele manda a pergunta de bateria uma vez por leitura (veja o
 | Attack Shark | X6, X11, X11 SE, Delux M600 Pro no mesmo receptor do R1 | escuta |
 | Attack Shark | R2 (receptor GearHub-V5), R5 Ultra, R6, R8 | pergunta |
 | ATK, VXE, VGN, Pulsar, Dareu, Hitscan | protocolo do "relatório 8" dos chips Compx/Beken (192 modelos ATK) | pergunta |
+| AULA | F75 (receptor `3554:FA09`) | pergunta só a bateria pelo receptor |
 | G-Wolves | gerações xvi e HTX Ultra | pergunta |
 | Lamzu, LunaFury, CRDRAKO, Vancer, RAWM, WLmouse | mesma família de protocolo | pergunta |
 | AJAZZ | NJ07, NJ08 | pergunta |

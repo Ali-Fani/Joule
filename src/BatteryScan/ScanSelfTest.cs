@@ -141,6 +141,92 @@ internal static class ScanSelfTest
         };
         Check("nome de usuario sai tambem do nome do aparelho", !DeviceSubmission.Render(named).Contains("fulana", StringComparison.OrdinalIgnoreCase));
 
+        // Revisao do envio (2026-11-14): dono no nome do fone, pecas sem bateria, escutas somadas, alvo e bateria informada.
+        var owned = new ScanReport
+        {
+            Hid = { new HidDeviceInfo { HardwareId = "045E:0B13", Product = "Analog Stick Pad" } },
+            Bluetooth = { Devices =
+            {
+                new BluetoothDeviceInfoDto { Name = "Fones de Maria", Address = "AA:BB:CC:DD:EE:03", ClassOfDevice = 0x240404 },
+                new BluetoothDeviceInfoDto { Name = "Ana's Buds", Address = "AA:BB:CC:DD:EE:04", ClassOfDevice = 0x240404 },
+                new BluetoothDeviceInfoDto { Name = "Controle do Xbox", Address = "AA:BB:CC:DD:EE:05", ClassOfDevice = 0x002508 },
+            } },
+        };
+        string ownedText = DeviceSubmission.Render(owned);
+        Check("dono sai do nome do fone (\"Fones de Maria\", \"Ana's Buds\")", !ownedText.Contains("Maria") && !ownedText.Contains("Ana's"));
+        Check("dono: so palavra inteira (\"Analog\" fica)", ownedText.Contains("Analog Stick Pad"));
+        Check("dono: marca nao e' dono (\"Controle do Xbox\" fica)", ownedText.Contains("Controle do Xbox"));
+        Check("verificar: acha nome com cara de dono", ScanPrivacy.Leaks("", owned).Any(l => l.Contains("dono")));
+        var (ownedBack, ownedReadable) = SubmissionCheck.Parse(ownedText);
+        Check("verificar: arquivo com dono tirado passa", ownedBack is not null && ScanPrivacy.Leaks(ownedReadable, ownedBack).Count == 0);
+
+        var nodes = new List<DeviceNodeInfo>
+        {
+            new() { InstanceId = @"ACPI\GenuineIntel\1", Class = "Processor", Enumerator = "ACPI" },
+            new() { InstanceId = @"SWD\PRINTENUM\{X}", Class = "PrintQueue", Enumerator = "SWD", Name = "Impressora do escritorio" },
+            new() { InstanceId = @"HID\VID_1D57&PID_FA60\7&1", Class = "HIDClass", Enumerator = "HID" },
+            new() { InstanceId = @"USB\VID_1D57&PID_FA60\5&2", Class = "USB", Enumerator = "USB" },
+            new() { InstanceId = @"USB\VID_8087&PID_0026\5&3", Class = "Net", Enumerator = "USB" },
+        };
+        var kept = DeviceSubmission.KeepForBattery(nodes, new[] { new HidDeviceInfo { HardwareId = "1D57:FA60" } });
+        Check("envio: so devnodes ligados a bateria (HID e o pai USB do aparelho)", kept.Count == 2 && kept.All(n => n.InstanceId.Contains("VID_1D57")));
+
+        CaptureGroup G(int count, params int[] bytes) => new()
+        {
+            HardwareId = "1D57:FA60", Path = "p", ReportId = 5, Length = bytes.Length, Count = count, Samples = { $"amostra {count}" },
+            Bytes = bytes.Select((b, i) => new CaptureByteStat { Offset = i, Min = b, Max = b, Distinct = 1, BatteryCandidate = i > 0 && b is >= 1 and <= 100 }).ToList(),
+        };
+        var first = new CaptureInfo { Seconds = 30, Groups = { G(3, 5, 73, 60) } };
+        var second = new CaptureInfo { Seconds = 30, Groups = { G(4, 5, 73, 61), new CaptureGroup { HardwareId = "046D:C539", Path = "q", Count = 1 } } };
+        var both = PassiveCapture.Merge(first, second);
+        var mergedGroup = both.Groups.First(g => g.HardwareId == "1D57:FA60");
+        Check("escutar de novo soma as escutas", both.Seconds == 60 && both.Groups.Count == 2 && mergedGroup.Count == 7 && mergedGroup.Samples.Count == 2);
+        Check("escutas somadas: byte que mudou deixa de ser candidato", mergedGroup.Bytes[1].BatteryCandidate && !mergedGroup.Bytes[2].BatteryCandidate);
+        Check("primeira escuta passa inteira", PassiveCapture.Merge(null, first) == first);
+
+        var keyed = new CaptureInfo { Groups = { G(1, 5, 1), new CaptureGroup { HardwareId = "046D:C539", Samples = { "x" } } } };
+        PassiveCapture.DropKeyboardSamples(keyed, new[]
+        {
+            new BatteryTray.Interop.HidCollection { Path = "k", Vid = 0x1D57, Pid = 0xFA60, UsagePage = 0x01, Usage = 0x06 },
+            new BatteryTray.Interop.HidCollection { Path = "m", Vid = 0x046D, Pid = 0xC539, UsagePage = 0x01, Usage = 0x02 },
+        });
+        Check("aparelho com teclado nao leva amostras cruas", keyed.Groups[0].Samples.Count == 0 && keyed.Groups[1].Samples.Count == 1);
+
+        var aimed = new ScanReport
+        {
+            Hid = { new HidDeviceInfo { HardwareId = "1D57:FA60", Product = "Fone Sem Fio", Transport = "USB" } },
+            Capture = first, PointedDevices = new() { "1D57:FA60" },
+            ReportedBattery = new() { ["Fone Redragon Zeus"] = 73 }, ReportedDevices = new() { "Fone Redragon Zeus" },
+        };
+        Check("bateria informada acha o byte parado no valor", DeviceSubmission.LevelMatches(aimed, 73) is [var hit] && hit.Contains("byte[1]"));
+        string aimedText = DeviceSubmission.Render(aimed);
+        Check("arquivo abre com o resumo para quem envia", aimedText.TrimStart('\uFEFF').StartsWith("====") && aimedText.IndexOf("1D57:FA60") < aimedText.IndexOf("RESUMO: ONDE"));
+        Check("arquivo leva o alvo e a bateria informada", aimedText.Contains("alvo    : 1D57:FA60") && aimedText.Contains("= 73%"));
+        var (aimedBack, _) = SubmissionCheck.Parse(aimedText);
+        string aimedSummary = aimedBack is null ? "" : SubmissionCheck.Summary(aimedBack, new List<string>(), "teste", "x.txt");
+        Check("verificar: mostra o apontado e marca a coluna", aimedSummary.Contains("aparelho apontado: 1D57:FA60") && aimedSummary.Contains("| sim |\n") | aimedSummary.Contains("| sim |\r\n"));
+        Check("relato do GitHub leva o apontado e a bateria", DeviceSubmission.Body(new[] { "Fone" }, "a.txt", "0.1", aimed) is var body && body.Contains("Apontado: 1D57:FA60") && body.Contains("73%"));
+        Check("relato leva os aparelhos achados, para triar sem o arquivo", DeviceSubmission.Body(new string[0], "a.txt", "0.1", aimed).Contains("Encontrado: 1D57:FA60 Fone Sem Fio"));
+        Check("busca de pedidos abertos so no repositorio, pelo nome", DeviceSubmission.SearchUrl("https://github.com/DillanCidral/Joule/issues", "HyperX Cloud III") == "https://github.com/DillanCidral/Joule/issues?q=is%3Aissue%20is%3Aopen%20HyperX%20Cloud%20III");
+        BatteryTray.Core.L.Set("en");
+        Check("relato segue a lingua do app", DeviceSubmission.Title(new[] { "Mouse" }) == "Device: Mouse" && DeviceSubmission.Body(new string[0], "a.txt", "0.1", aimed).Contains("Found: 1D57:FA60") && DeviceSubmission.Body(new string[0], "a.txt", "0.1", null, email: true).Contains("into this email"));
+        BatteryTray.Core.L.Set("pt");
+
+        // --verificar (2026-11-14): o arquivo que chega volta a ser relatorio e passa na conferencia.
+        Check("arquivo nao promete mais \"nada foi escrito\"", !text.Contains("nada foi escrito"));
+        var (back, readable) = SubmissionCheck.Parse(text);
+        Check("verificar: le o JSON de dentro do .txt", back is not null && back.ReportedDevices?.Contains("Fone Redragon Zeus") == true);
+        Check("verificar: arquivo do Joule nao vaza nada", back is not null && ScanPrivacy.Leaks(readable, back).Count == 0);
+        Check("verificar: aceita o .json solto do JouleScan", SubmissionCheck.Parse(System.Text.Json.JsonSerializer.Serialize(ScanPrivacy.Redact(report), ScanPrivacy.Json)).Report is not null);
+        Check("verificar: texto qualquer nao e' envio", SubmissionCheck.Parse("oi, segue o arquivo").Report is null && SubmissionCheck.Parse("{ quebrado").Report is null);
+        string planted = text.Replace("Fone Teste", "Fone A1:B2:C3:D4:E5:F7").Replace("\"serial\": \"[tirado]\"", "\"serial\": \"SN9X7Y5Z\"");
+        var (dirty, dirtyText) = SubmissionCheck.Parse(planted);
+        var leaks = dirty is null ? new List<string>() : ScanPrivacy.Leaks(dirtyText, dirty);
+        Check("verificar: acha endereco e serie plantados", leaks.Any(l => l.Contains("endereco")) && leaks.Any(l => l.Contains("serie")));
+        Check("verificar: com vazamento nao sai linha de catalogo", dirty is not null && !SubmissionCheck.Summary(dirty, leaks, "teste", "x.txt").Contains("| VID:PID |"));
+        Check("verificar: sem vazamento sai a linha do aparelho", back is not null && SubmissionCheck.Summary(back, new List<string>(), "teste", "x.txt").Contains("| 1D57:FA60 |"));
+        Check("verificar: texto de fora vira uma linha curta sem '|'", SubmissionCheck.Clean("a|b\nc" + new string('x', 100)) is { Length: 81 } c && !c.Contains('|') && !c.Contains('\n'));
+
         // JouleScan (revisao de 2026-11-12): so marca que pergunta e nao foi testada pede licenca no console.
         var registry = BatteryTray.Core.ProviderRegistry.CreateDefault();
         var present = new List<BatteryTray.Interop.HidCollection>

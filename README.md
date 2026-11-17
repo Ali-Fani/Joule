@@ -9,7 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-FFC21F?labelColor=1D1B18" alt="License: AGPL-3.0"></a>
 </p>
 
-<p align="center"><img src="docs/images/bandeira-us.png" alt="" height="14"> <strong>English</strong> · <a href="README.pt-BR.md"><img src="docs/images/bandeira-br.png" alt="" height="14"> Português</a></p>
+<p align="center"><img src="docs/images/bandeira-us.png" alt="" height="14"> <strong>English</strong> · <a href="README.pt-BR.md"><img src="docs/images/bandeira-br.png" alt="" height="14"> Português</a> · <a href="README.fr.md"><img src="docs/images/bandeira-fr.png" alt="" height="14"> Français</a> · <a href="README.ru.md"><img src="docs/images/bandeira-ru.png" alt="" height="14"> Русский</a></p>
 
 <p align="center">
   <a href="https://github.com/DillanCidral/Joule/releases/latest/download/JouleApp-win-Setup.exe"><img src="https://img.shields.io/badge/Download_for_Windows-FFC21F?style=for-the-badge" alt="Download for Windows" height="40"></a>
@@ -31,8 +31,10 @@ battery your wireless devices have left. It is free, open source and in
 - **Connect notice**: when a device turns on, Joule shows its battery, on the
   widget or as a Windows notification, with sound if you want.
 - **Low battery alert**, with a limit you choose.
-- **English and Portuguese**: follows the Windows language, and you can switch
-  in Settings.
+- **English, Portuguese, French and Russian**: follows the Windows language, and you can
+  switch in Settings. French and Russian were translated by people who use Joule.
+- **Full in green**: devices that report charging turn green on the widget and
+  in the tray when they reach 100%.
 - **Summary after updating**: how many devices Joule tracked and how many
   low-battery warnings it gave, counted only on your PC, plus what changed in
   the version.
@@ -55,20 +57,30 @@ Get `JouleApp-win-Setup.exe` with the button above or from the
 |---|---|---|
 | Attack Shark R1 | dongle | ✅ checked |
 | Rapoo MT760 Mini | dongle | ✅ checked |
+| Razer BlackShark V3 | dongle | ✅ checked |
+| Zaopin ZPW MAX (8K) | dongle | ✅ checked |
+| AJAZZ 2.4G 8K receiver | dongle | ✅ checked |
+| AULA F75 | cable (dongle not tested yet) | ✅ checked |
 | DualSense | cable | ✅ checked |
 | Xbox controllers | adapter and cable | ✅ checked |
 | 8BitDo Ultimate 2C | cable | ✅ checked |
 | Any Bluetooth device whose battery Windows already shows in *Settings > Bluetooth* | Bluetooth | ✅ checked |
+| Logitech mice on LIGHTSPEED (PRO X 2 and others) and Unifying (MX Master 2S), SteelSeries Arctis 1 and Arctis 7, VXE R1 Pro Max, VGN IO Aurora | dongle | ✅ confirmed by users |
 | Logitech, Razer, SteelSeries, HyperX and Corsair: mice, keyboards and headsets | dongle | 🧪 not tested yet |
 | About 20 other brands: ATK, VXE, VGN, Pulsar, Dareu, AJAZZ, Lamzu, WLmouse, G-Wolves, Hitscan, K-Snake, Bytech, Motospeed, Keychron, Incott and more Attack Shark models | dongle | 🧪 not tested yet |
 
 🧪 means written from open protocol documentation and not yet tested on real
-hardware. If you own one, your report is what confirms it. Full list:
+hardware. If you own one, your report is what confirms it. "Confirmed by users"
+means someone sent a capture showing Joule reading it on their own PC. Full list:
 [docs/supported-devices.md](docs/supported-devices.md).
 
 ## My device is not listed
 
-Open **Settings > Send my device** inside Joule. It listens for 30 seconds
+First check the [device families](https://github.com/DillanCidral/Joule/issues?q=is%3Aissue%20is%3Aopen%20label%3Atracking): if yours is there, give it a 👍
+instead of opening a new issue. Joule also links to similar requests when you
+send one.
+
+Open **Settings > Advanced > Submit a device** inside Joule. It listens for 30 seconds
 while you use the device, shows you what it found, removes personal data
 (serial number, Bluetooth address, PC name, user name) and saves a `.txt`.
 You then send that file yourself, as a
@@ -82,8 +94,9 @@ Want to add the device yourself? See
 <summary><strong>What Joule does to your devices</strong></summary>
 
 - It reads when you open the app, when you sign in to Windows, when you click
-  **Refresh** and when you plug in or turn on a device (only that device, at
-  most once every 10 seconds). It never polls in a loop.
+  **Refresh**, when you plug in or turn on a device (only that device, at
+  most once every 10 seconds) and when you open the panel if the last reading
+  is more than an hour old. It never polls in a loop.
 - For most devices it only **listens** to what the dongle or cable already
   sends, or reads the number Windows itself stored (Bluetooth).
 - For some brands on a dongle (Logitech, Razer, SteelSeries, HyperX, Corsair
@@ -117,6 +130,16 @@ dotnet run --project src/BatteryTray -- --demo
 [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/architecture.md](docs/architecture.md).
 
 </details>
+
+## Thanks
+
+Version 0.2.1 has code and translations from the community:
+[@Ali-Fani](https://github.com/Ali-Fani) (Razer BlackShark V3),
+[@wrldwideme](https://github.com/wrldwideme) (AULA F75, the AJAZZ and Zaopin
+receivers and the Russian translation),
+[@TukaLeHibou](https://github.com/TukaLeHibou) (French translation), and the
+green full battery came from an idea by Daniel Palma. Thank you, and thanks to
+everyone who sent a capture.
 
 ## Support Joule
 

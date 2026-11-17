@@ -51,6 +51,7 @@ public static class AppInfo
     /// </summary>
     public const string Repository = "github.com/DillanCidral/Joule";
     public const string NewIssueUrl = "https://" + Repository + "/issues/new";
+    public const string IssuesUrl = "https://" + Repository + "/issues";
 
     /// <summary>Versao do Fonts/Geist-SemiBold.ttf (tabela name); trocar junto com o arquivo.</summary>
     public const string GeistVersion = "1.900";
@@ -61,7 +62,7 @@ public static class AppInfo
     /// </summary>
     public const string SupportUrl = "https://buy.stripe.com/bJeeVe5yq5Pub7bfz8bZe00";
 
-    /// <summary>E-mail "dev" do Dillan, público. Vazio esconde o caminho por e-mail.</summary>
+    /// <summary>E-mail de contato do projeto, público. Vazio esconde o caminho por e-mail.</summary>
     public const string ContactEmail = "dillan.apps@gmail.com";
 
     public static string Version { get; } =

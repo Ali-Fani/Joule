@@ -61,6 +61,7 @@ public sealed class ReadingService : IDisposable
     public RefreshResult? RefreshLive(RefreshResult previous, bool passive, bool bluetooth)
     {
         if (!_oneAtATime.Wait(0)) return null;
+        HidRequest.Live = true;
         try
         {
             var replaced = new Dictionary<string, DeviceEntry>(StringComparer.OrdinalIgnoreCase);
@@ -101,6 +102,7 @@ public sealed class ReadingService : IDisposable
         }
         finally
         {
+            HidRequest.Live = false;
             _oneAtATime.Release();
         }
     }

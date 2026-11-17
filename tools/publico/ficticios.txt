@@ -17,3 +17,7 @@ contact@zeldon.ru
 sk_live_
 pk_live_
 github_pat_
+AA:BB:CC:DD:EE:03
+AA:BB:CC:DD:EE:04
+AA:BB:CC:DD:EE:05
+A1:B2:C3:D4:E5:F7

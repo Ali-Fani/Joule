@@ -23,10 +23,12 @@ public static class TrayIconFactory
     private static readonly Color Low = Color.FromArgb(0xF0, 0x45, 0x3A);
     private static readonly Color Ember = Color.FromArgb(0xFF, 0xC2, 0x1F); // amarelo do icone final
     private static readonly Color EmberLight = Color.FromArgb(0xFF, 0xE3, 0x8A); // miolo
+    private static readonly Color Full = Color.FromArgb(0xC8, 0xE0, 0x5A); // lima da identidade: 100% carregando
+    private static readonly Color FullLight = Color.FromArgb(0xE6, 0xF2, 0xAE);
 
     /// <param name="percent">O mais fraco entre os que tem numero; null = sem valor.</param>
     /// <param name="reading">Leitura em curso: tres pontos.</param>
-    public static Icon Create(int? percent, int lowThreshold, bool reading = false)
+    public static Icon Create(int? percent, int lowThreshold, bool reading = false, bool full = false)
     {
         bool lightBar = ReadDword(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme") == 1;
         Color glyph = lightBar ? Color.FromArgb(0x1A, 0x1A, 0x1A) : Color.White;
@@ -65,11 +67,12 @@ public static class TrayIconFactory
                 Fill(g, halo, Pill(0.75f, 8.25f, 30.5f, 15.5f));
                 using var pill = Pill(2, 9.5f, 28, 13);
                 // A ponta some como na logo: clara no comeco, amarela a 30%, quase transparente no fim.
-                using var brush = new LinearGradientBrush(new RectangleF(2, 9.5f, 28, 13), Ember, Ember, LinearGradientMode.Horizontal)
+                Color main = full ? Full : Ember, light = full ? FullLight : EmberLight;
+                using var brush = new LinearGradientBrush(new RectangleF(2, 9.5f, 28, 13), main, main, LinearGradientMode.Horizontal)
                 {
                     InterpolationColors = new ColorBlend
                     {
-                        Colors = new[] { EmberLight, Ember, Color.FromArgb(51, Ember) },
+                        Colors = new[] { light, main, Color.FromArgb(51, main) },
                         Positions = new[] { 0f, 0.3f, 1f },
                     },
                 };

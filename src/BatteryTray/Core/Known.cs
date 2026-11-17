@@ -11,6 +11,7 @@ public static class Known
         ["1D57:FA60"] = "Mouse Attack Shark (dongle 2.4GHz)",
         ["1D57:FA61"] = L.T("Mouse Attack Shark (cabo)", "Attack Shark mouse (wired)"),
         ["24AE:1871"] = "Rapoo MT760 Mini",
+        ["1532:057A"] = "Razer BlackShark V3",
         ["291D:385D"] = "MCHOSE V9 PRO (headset)",
         ["2DC8:310A"] = "8BitDo Ultimate 2C",
         ["2DC8:301C"] = L.T("8BitDo Ultimate 2C (dongle ocioso)", "8BitDo Ultimate 2C (idle dongle)"),
@@ -46,6 +47,7 @@ public static class Known
         ["1D57:FA60"] = DeviceKind.Mouse,
         ["1D57:FA61"] = DeviceKind.Mouse,
         ["24AE:1871"] = DeviceKind.Mouse,
+        ["1532:057A"] = DeviceKind.Headset,
         ["291D:385D"] = DeviceKind.Headset,
         ["2DC8:310A"] = DeviceKind.Gamepad,
         ["2DC8:301C"] = DeviceKind.Gamepad,
@@ -117,7 +119,14 @@ public static class Known
         CableOnly.Contains(Id(vid, pid)) ? "Cabo" : "Dongle";
 
     /// <summary>Origem como aparece na tela: o dado fica em portugues (cache, comparacoes), so o rotulo traduz.</summary>
-    public static string OriginLabel(string origin) => origin switch { "Cabo" => L.T("Cabo", "Wired"), "Adaptador" => L.T("Adaptador", "Adapter"), _ => origin };
+    public static string OriginLabel(string origin) => origin switch
+    {
+        "Cabo" => L.T("Cabo", "Wired"),
+        "Adaptador" => L.T("Adaptador", "Adapter"),
+        "Dongle" => L.T("Dongle", "Dongle"),
+        "Bluetooth" => "Bluetooth",
+        _ => origin,
+    };
 
     public static string Id(ushort vid, ushort pid) => $"{vid:X4}:{pid:X4}";
 

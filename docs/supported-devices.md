@@ -18,10 +18,27 @@ battery question once per reading (see [SECURITY.md](../SECURITY.md)).
 | Attack Shark R1 | dongle | listens | Updates by itself while the mouse is awake. A mouse standing still sends nothing |
 | Attack Shark R1 | cable | presence | Shows "charging", no percentage |
 | Rapoo MT760 Mini | dongle | listens | The mouse only reports when Rapoo's own software is running; otherwise Joule shows the last value with its age |
+| Razer BlackShark V3 | dongle | asks | Asks once per reading (checked on hardware); between readings it keeps what the headset reported on its own, with its age |
 | DualSense (PS5) | cable only | listens | Over Bluetooth the controller only reports battery after the host writes to it, so that path is left out |
 | Xbox controllers | adapter, cable | XInput | Coarse level (low / medium / full) on the adapter; "on cable" when wired |
 | 8BitDo Ultimate 2C | cable | XInput | Only "on cable", no percentage. On the dongle it reports a false value, which Joule discards |
 | Any Bluetooth device | Bluetooth | reads Windows | The same number as *Settings > Bluetooth*. Nothing goes over the radio |
+| Zaopin ZPW MAX (8K) | `3554:F527` receiver | asks | Battery percentage confirmed on hardware |
+| AULA F75 | `258A:010C` cable | presence | Shows "wired", without inventing a percentage |
+| AJAZZ 2.4G 8K | `3151:402D` GearHub-V5 receiver | asks | Receiver status `F7`; battery percentage confirmed on hardware |
+
+## Confirmed by users
+
+Written from open documentation, then confirmed by someone who sent a capture
+showing Joule reading it on their own PC (November 2026).
+
+| Device | Connection |
+|---|---|
+| Logitech mice on LIGHTSPEED (PRO X 2 and others) | LIGHTSPEED receiver |
+| Logitech MX Master 2S | Unifying receiver |
+| SteelSeries Arctis 1 Wireless and Arctis 7 | dongle |
+| VXE R1 Pro Max | `3554:F58A` receiver |
+| VGN IO Aurora and Aurora Pro 8K | `3554:FB08` and `3554:FB40` receivers |
 
 ## Not tested
 
@@ -35,6 +52,7 @@ battery question once per reading (see [SECURITY.md](../SECURITY.md)).
 | Attack Shark | X6, X11, X11 SE, Delux M600 Pro on the same receiver as the R1 | listens |
 | Attack Shark | R2 (GearHub-V5 receiver), R5 Ultra, R6, R8 | asks |
 | ATK, VXE, VGN, Pulsar, Dareu, Hitscan | "report 8" protocol of Compx/Beken chips (192 ATK models) | asks |
+| AULA | F75 (`3554:FA09` receiver) | asks only for battery on the receiver |
 | G-Wolves | xvi generations and HTX Ultra | asks |
 | Lamzu, LunaFury, CRDRAKO, Vancer, RAWM, WLmouse | same protocol family | asks |
 | AJAZZ | NJ07, NJ08 | asks |

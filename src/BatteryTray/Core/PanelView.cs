@@ -26,7 +26,11 @@ public sealed record DeviceRowView(
     string? Age,
     string? ChargeText,
     string? Note,
-    string Tooltip);
+    string Tooltip)
+{
+    /// <summary>100% num aparelho que informa a carga: verde da identidade (lima), ideia do Daniel Palma (2026-11-16). Cabo sem percentual nao entra.</summary>
+    public bool IsFull => ValueKind == ValueKind.Percent && Percent == 100 && ChargeText is not null;
+}
 
 /// <summary>Uma linha de "outros": plugado, sem valor, com o motivo.</summary>
 public sealed record OtherRowView(string Key, string Name, DeviceKind Kind, string Reason);
@@ -43,6 +47,12 @@ public static class PanelView
 {
     /// <summary>Acima disto uma leitura sob demanda vira "valor antigo".</summary>
     public static readonly TimeSpan StaleAfter = TimeSpan.FromMinutes(15);
+
+    /// <summary>Abrir o painel le de novo, uma vez, se a ultima leitura completa passou disto (2026-11-16, regra 1: gatilho da pessoa, nunca relogio).</summary>
+    public static readonly TimeSpan ReadOnOpenAfter = TimeSpan.FromHours(1);
+
+    public static bool ReadOnOpen(DateTime? lastReadingUtc, DateTime nowUtc) =>
+        lastReadingUtc is { } last && nowUtc - last > ReadOnOpenAfter;
 
     public static List<DeviceRowView> MainRows(IEnumerable<DeviceEntry> devices, int threshold, DateTime nowUtc)
     {
