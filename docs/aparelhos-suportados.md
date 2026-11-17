@@ -18,6 +18,7 @@ quer dizer que ele manda a pergunta de bateria uma vez por leitura (veja o
 |---|---|---|---|
 | Attack Shark R1 | dongle | escuta | Atualiza sozinho enquanto o mouse está acordado. Mouse parado não manda nada |
 | Attack Shark R1 | cabo | presença | Mostra "carregando", sem percentual |
+| Attack Shark V6 | dongle | escuta | Visto só em 100% até agora (o mouse manda uma mensagem de "cheio"); níveis menores seguem o formato do X11, mas não foram testados |
 | Rapoo MT760 Mini | dongle | escuta | O mouse só informa com o programa da Rapoo aberto; sem ele, o Joule mostra o último valor com a idade |
 | Razer BlackShark V3 | dongle | pergunta | Pergunta uma vez por leitura (conferido no aparelho); entre leituras guarda o que o fone informou sozinho, com a idade |
 | DualSense (PS5) | só no cabo | escuta | Por Bluetooth o controle só informa a bateria depois que o PC escreve nele, então esse caminho fica de fora |

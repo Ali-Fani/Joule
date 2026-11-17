@@ -39,6 +39,10 @@ internal static class SelfTest
         Eq("shark X11 em %", 64, AttackSharkProvider.ParsePercent(B(0x03, 0x55, 0x40, 0x01, 64)));
         Null("shark X11 sem flag 01 nao vale", AttackSharkProvider.ParsePercent(B(0x03, 0x55, 0x40, 0x00, 64)));
         Eq("shark X6 em dezenas", 80, AttackSharkProvider.ParsePercent(B(0x03, 0x85, 0x40, 0x01, 8)));
+        Eq("shark V6 cheio (captura real)", 100, AttackSharkProvider.ParsePercent(B(0x03, 0x24, 0x41, 0x01, 0x64)));
+        Eq("shark V6 evento 40 em %", 64, AttackSharkProvider.ParsePercent(B(0x03, 0x24, 0x40, 0x01, 64)));
+        Null("shark V6 evento 41 so vale com 100", AttackSharkProvider.ParsePercent(B(0x03, 0x24, 0x41, 0x01, 80)));
+        Null("shark evento 41 so vale no V6", AttackSharkProvider.ParsePercent(B(0x03, 0x55, 0x41, 0x01, 100)));
         Null("shark X3 sem escala conhecida", AttackSharkProvider.ParsePercent(B(0x03, 0x4D, 0x40, 0x01, 8)));
 
         // --- AJAZZ, Rapoo VT9, Lamzu ---

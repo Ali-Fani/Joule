@@ -17,6 +17,7 @@ battery question once per reading (see [SECURITY.md](../SECURITY.md)).
 |---|---|---|---|
 | Attack Shark R1 | dongle | listens | Updates by itself while the mouse is awake. A mouse standing still sends nothing |
 | Attack Shark R1 | cable | presence | Shows "charging", no percentage |
+| Attack Shark V6 | dongle | listens | Seen only at 100% so far (the mouse sends a "full" message); lower levels use the same format as the X11 but are untested |
 | Rapoo MT760 Mini | dongle | listens | The mouse only reports when Rapoo's own software is running; otherwise Joule shows the last value with its age |
 | Razer BlackShark V3 | dongle | asks | Asks once per reading (checked on hardware); between readings it keeps what the headset reported on its own, with its age |
 | DualSense (PS5) | cable only | listens | Over Bluetooth the controller only reports battery after the host writes to it, so that path is left out |
